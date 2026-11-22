@@ -1,7 +1,7 @@
 import type { IUserDaemon } from "$interfaces/IUserDaemon";
 import type { IWaveKernel, KernelOpModuleName } from "$interfaces/IWaveKernel";
 import type { IBugHuntKernelModule } from "$interfaces/modules/IBugHunt";
-import { ArcOSVersion, Env, Kernel, Server, Stack } from "$ts/env";
+import { SacrudaVersion, Env, Kernel, Server, Stack } from "$ts/env";
 import { KernelLogs } from "$ts/kernel/getters";
 import { Backend } from "$ts/kernel/mods/server/axios";
 import { KernelModule } from "$ts/kernel/module";
@@ -25,13 +25,13 @@ export class BugHuntKernelModule extends KernelModule implements IBugHuntKernelM
   createReport(options = defaultReportOptions, app?: App, storeItemId?: string): OutgoingBugReport {
     Kernel.LogOperation("kmod", "bughunt", "createReport");
 
-    const server = URL.parse(Server.url || "https://arcapi.nl")?.host;
+    const server = URL.parse(Server.url || "https://api.sacruda.nl")?.host;
 
     return {
       title: options.title,
       body: options.body || "No body",
       logs: options.noLogs ? [] : KernelLogs(),
-      version: ArcOSVersion,
+      version: SacrudaVersion,
       location: window.location,
       userAgent: navigator.userAgent,
       api: server,

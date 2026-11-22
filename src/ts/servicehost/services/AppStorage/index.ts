@@ -4,7 +4,7 @@ import type { IServiceHost } from "$interfaces/IServiceHost";
 import type { IThirdPartyAppProcess } from "$interfaces/IThirdPartyAppProcess";
 import type { AppStorage, AppStoreCb, IApplicationStorage } from "$interfaces/services/IApplicationStorage";
 import { BuiltinAppImportPathAbsolutes } from "$ts/apps/store";
-import { ArcOSVersion, Daemon, Env, Fs, State, SysDispatch } from "$ts/env";
+import { SacrudaVersion, Daemon, Env, Fs, State, SysDispatch } from "$ts/env";
 import { ArcBuild } from "$ts/metadata/build";
 import { ArcMode } from "$ts/metadata/mode";
 import { CommandResult } from "$ts/result";
@@ -62,7 +62,7 @@ export class ApplicationStorage extends BaseService implements IApplicationStora
       MessageBox(
         {
           title: "App load error",
-          message: `ArcOS failed to load a first-party application because of an error. ${result.errorMessage ?? "Unknown error"}.`,
+          message: `Sacruda failed to load a first-party application because of an error. ${result.errorMessage ?? "Unknown error"}.`,
           buttons: [{ caption: "Okay", action: () => r(), suggested: true }],
           image: "WarningIcon",
         },
@@ -147,8 +147,8 @@ export class ApplicationStorage extends BaseService implements IApplicationStora
 
       if (app.loadCondition && !(await app.loadCondition(Daemon))) return CommandResult.Error(`LOAD_CONDITION`);
 
-      if (app._internalMinVer && compareVersion(ArcOSVersion, app._internalMinVer) === "higher") {
-        return CommandResult.Error(`This application expects a newer version of ArcOS`);
+      if (app._internalMinVer && compareVersion(SacrudaVersion, app._internalMinVer) === "higher") {
+        return CommandResult.Error(`This application expects a newer version of Sacruda`);
       }
 
       if (app._internalSysVer || app._internalOriginalPath) {
@@ -158,7 +158,7 @@ export class ApplicationStorage extends BaseService implements IApplicationStora
       const end = performance.now() - start;
       const appCopy = cloneAppMeta(app);
 
-      appCopy._internalSysVer = `v${ArcOSVersion}-${ArcMode()}_${ArcBuild()}`;
+      appCopy._internalSysVer = `v${SacrudaVersion}-${ArcMode()}_${ArcBuild()}`;
       appCopy._internalOriginalPath = path;
       appCopy._internalLoadTime = end;
       if (originalPath) appCopy._internalResolvedPath = originalPath;

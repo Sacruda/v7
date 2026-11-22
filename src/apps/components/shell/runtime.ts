@@ -36,7 +36,7 @@ export class ShellRuntime extends AppProcess implements IShellRuntime {
   }
 
   get arcFind() {
-    return Daemon.serviceHost?.getService<IArcFindService>("ArcFindSvc");
+    return Daemon.serviceHost?.getService<IArcFindService>("SacrudaSearchSvc");
   }
 
   //#region LIFECYCLE

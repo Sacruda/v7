@@ -39,7 +39,7 @@ export type ServiceIdentifier =
   | "BugHuntUsp"
   | "ShareMgmt"
   | "AppStorage"
-  | "ArcFindSvc"
+  | "SacrudaSearchSvc"
   | "SystemShortcutsSvc"
   | "ProtoService"
   | "TrayHostSvc"
