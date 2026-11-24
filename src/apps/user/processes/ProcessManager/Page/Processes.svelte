@@ -10,7 +10,6 @@
   import { ProcessesHelper } from "$ts/helpers/processes";
   import { Plural } from "$ts/util";
   import AllUsersTree from "./Processes/AllUsersTree.svelte";
-  import Header from "./Processes/Header.svelte";
   import Tree from "./Processes/Tree.svelte";
 
   const { process }: { process: IProcessManagerRuntime } = $props();
@@ -26,7 +25,6 @@
 </script>
 
 <div class="top">
-  <Header />
   {#if allUsers}
     <AllUsersTree {process} />
   {:else}

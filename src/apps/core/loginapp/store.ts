@@ -1,4 +1,4 @@
-import { Daemon, SoundBus, State } from "$ts/env";
+import { Daemon, Server, SoundBus, State } from "$ts/env";
 import { CommandResult } from "$ts/result";
 import { authcode } from "$ts/util";
 import type { UserDaemonStartOptions } from "$types/daemon";
@@ -7,7 +7,7 @@ import type { LoginAppRuntime } from "./runtime";
 export function LoginUserDaemonStartOptions(runtime: LoginAppRuntime): UserDaemonStartOptions {
   return {
     onUserInfo: async (info) => {
-      runtime.profileImage.set(`${runtime.server.url}/user/pfp/${info._id}${authcode()}`);
+      runtime.profileImage.set(`${Server.url}/user/pfp/${info._id}${authcode()}`);
 
       if (info.hasTotp && info.restricted) {
         runtime.loadingStatus.set("Requesting 2FA");
@@ -27,7 +27,7 @@ export function LoginUserDaemonStartOptions(runtime: LoginAppRuntime): UserDaemo
 
       if (info.isSystem) {
         runtime.errorMessage.set(
-          "This is a system account. Changes you make here can cause external ArcOS services to stop working. To continue, click Okay."
+          "This is a system account. Changes you make here can cause external Sacruda services to stop working. To continue, click Okay."
         );
         runtime.loadingStatus.set("");
 

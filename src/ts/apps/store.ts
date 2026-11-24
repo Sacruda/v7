@@ -42,6 +42,7 @@ export const BuiltinAppImportPathAbsolutes = import.meta.glob([
   "$apps/components/arctermcolors/ArcTermColors",
   "$apps/components/masteroptions/MasterOptions",
   "$apps/components/sendbetafeedback/SendBetaFeedbackApp",
+  "$apps/components/genericobjectviewer/GenericObjectViewerApp",
   "$apps/user/advsystemsettings/AdvSystemSettings",
   "$apps/user/appstore/AppStore",
   "$apps/user/arcterm/ArcTerm",
@@ -70,6 +71,7 @@ export const BuiltinAppImportPathAbsolutes = import.meta.glob([
 export const AdminAppImportPathAbsolutes = import.meta.glob([
   "$apps/admin/adminportal/AdminPortal",
   "$apps/admin/executequery/ExecuteQueryApp",
+  "$apps/admin/newexecutequery/NewExecuteQuery",
   "$apps/admin/mailbrokermanagerapp/MailbrokerManagerApp",
 ]);
 

@@ -53,7 +53,7 @@
         return;
       }
 
-      const available = await process.server.checkUsernameAvailability(enteredUsername);
+      const available = await Server.checkUsernameAvailability(enteredUsername);
 
       if (available) $newUsername = enteredUsername;
 
@@ -93,7 +93,7 @@
         return;
       }
 
-      const available = await process.server.checkEmailAvailability(enteredEmail);
+      const available = await Server.checkEmailAvailability(enteredEmail);
 
       if (available) $email = enteredEmail;
 
@@ -121,8 +121,8 @@
 </script>
 
 <div class="form-page identity">
-  <h1>Your ArcOS Identity</h1>
-  <p class="subtitle">We'll use this information to create your ArcOS account.</p>
+  <h1>Your Sacruda Identity</h1>
+  <p class="subtitle">We'll use this information to create your Sacruda account.</p>
   <div class="fields">
     <div class="field username">
       <p class="name">Username</p>

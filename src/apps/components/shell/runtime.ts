@@ -13,6 +13,8 @@ import type { RecursiveDirectoryReadReturn } from "$types/system/fs";
 import { ShellAccelerators } from "./accelerators";
 import { ShellContextMenu } from "./context";
 
+// test
+
 export class ShellRuntime extends AppProcess implements IShellRuntime {
   public startMenuOpened = Store<boolean>(false);
   public actionCenterOpened = Store<boolean>(false);
@@ -33,7 +35,7 @@ export class ShellRuntime extends AppProcess implements IShellRuntime {
   }
 
   get arcFind() {
-    return Daemon.serviceHost?.getService<IArcFindService>("ArcFindSvc");
+    return Daemon.serviceHost?.getService<IArcFindService>("SacrudaSearchSvc");
   }
 
   //#region LIFECYCLE
