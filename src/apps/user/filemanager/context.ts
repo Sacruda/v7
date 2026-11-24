@@ -5,7 +5,7 @@ import { Daemon, Env, Fs } from "$ts/env";
 import { UserPaths } from "$ts/user/store";
 import { MessageBox } from "$ts/util/dialog";
 import { getItemNameFromPath, getParentDirectory, join } from "$ts/util/fs";
-import type { AppContextMenu } from "$types/apps/app";
+import type { AppContextMenu } from "$types/apps";
 import type { FileEntry, FolderEntry } from "$types/system/fs";
 import type { QuotedDrive } from "./types";
 
@@ -209,7 +209,7 @@ export function FileManagerContextMenu(runtime: IFileManagerRuntime): AppContext
       },
       { sep: true },
       {
-        caption: "Open in ArcTerm",
+        caption: "Open in Terminal",
         icon: "terminal",
         action: () => {
           runtime.spawnApp("ArcTerm", +Env.get("shell_pid"), runtime.path());
@@ -260,6 +260,11 @@ export function FileManagerContextMenu(runtime: IFileManagerRuntime): AppContext
         action: (file, path) => {
           runtime.createShortcut(file.name, path);
         },
+      },
+      {
+        caption: "Download",
+        icon: "download",
+        action: () => runtime.downloadSelected(),
       },
       { sep: true },
       {
@@ -476,7 +481,7 @@ export function FileManagerContextMenu(runtime: IFileManagerRuntime): AppContext
       },
       { sep: true },
       {
-        caption: "Manage ArcOS",
+        caption: "Manage Sacruda",
         icon: "cog",
         subItems: [
           {

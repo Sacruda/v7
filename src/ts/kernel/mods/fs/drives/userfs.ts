@@ -1,6 +1,5 @@
 import type { IFilesystemDrive } from "$interfaces/IFilesystemDrive";
-import type { IEnvironment } from "$interfaces/modules/IEnvironment";
-import { Daemon, getKMod, Server } from "$ts/env";
+import { Daemon, Env, Server } from "$ts/env";
 import { FilesystemDrive } from "$ts/kernel/mods/fs/drives/generic";
 import { Backend } from "$ts/kernel/mods/server/axios";
 import { ArcBuild } from "$ts/metadata/build";
@@ -13,7 +12,7 @@ import type {
   DriveCapabilities,
   ExtendedStat,
   FilesystemProgressCallback,
-  FsAccess,
+  FileAccessor,
   RecursiveDirectoryReadReturn,
   UserQuota,
 } from "$types/system/fs";
@@ -43,7 +42,7 @@ export class UserDrive extends FilesystemDrive implements IFilesystemDrive {
   constructor(uuid: string, letter: string) {
     super(uuid, letter);
 
-    this.isNightly = !!getKMod<IEnvironment>("env").get(`NIGHTLY_WHODIS_${ArcBuild()}`);
+    this.isNightly = !!Env.get(`NIGHTLY_WHODIS_${ArcBuild()}`);
   }
 
   async readDir(path: string = ""): Promise<DirectoryReadReturn | undefined> {
@@ -218,9 +217,9 @@ export class UserDrive extends FilesystemDrive implements IFilesystemDrive {
     try {
       const response = await Backend.post(`/fs/accessors/${path}`, {}, { headers: { Authorization: `Bearer ${Daemon!.token}` } });
 
-      const data = response.data as FsAccess;
+      const data = response.data as FileAccessor;
 
-      return `${this.server.url}/fs/direct/${data.userId}/${data.accessor}${authcode()}`;
+      return `${Server.url}/fs/direct/${data.userId}/${data.accessor}${authcode()}`;
     } catch {
       return undefined;
     }
@@ -234,7 +233,7 @@ export class UserDrive extends FilesystemDrive implements IFilesystemDrive {
 
       if (response.status !== 200) return {};
 
-      const data = response.data as Record<string, any>;
+      const data = response.data as Record<string, T>;
 
       return data;
     } catch {
@@ -247,11 +246,11 @@ export class UserDrive extends FilesystemDrive implements IFilesystemDrive {
       const response = await Backend.get(`/fs/stat/${path}`, { headers: { Authorization: `Bearer ${Daemon!.token}` } });
       const data = response.data as ExtendedStat;
 
-      if (data.modifiers?.createdBy?.user) {
-        data.modifiers.createdBy.user.profilePicture = `${Server.url}${data.modifiers.createdBy.user.profilePicture}`;
+      if (data.modifiers?.createdBy?.user?.profilePicture) {
+        data.modifiers.createdBy.user.profilePicture = `${Server.url}${data.modifiers.createdBy.user.profilePicture}${authcode()}`;
       }
-      if (data.modifiers?.lastWrite?.user) {
-        data.modifiers.lastWrite.user.profilePicture = `${Server.url}${data.modifiers.lastWrite.user.profilePicture}`;
+      if (data.modifiers?.lastWrite?.user?.profilePicture) {
+        data.modifiers.lastWrite.user.profilePicture = `${Server.url}${data.modifiers.lastWrite.user.profilePicture}${authcode()}`;
       }
 
       return data as ExtendedStat;

@@ -13,7 +13,7 @@ import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
 import { getParentDirectory } from "$ts/util/fs";
 import { tryJsonParse } from "$ts/util/json";
 import { Store } from "$ts/writable";
-import type { AppContextMenu, AppProcessData } from "$types/apps/app";
+import type { AppProcessData } from "$types/apps/app";
 import type { ExpandedMessage, MessageAttachment } from "$types/server/messaging";
 import type { PublicUserInfo } from "$types/user";
 import dayjs from "dayjs";
@@ -22,6 +22,7 @@ import { MessagesAltMenu } from "./altmenu";
 import { MessagesContextMenu } from "./context";
 import { messagingPages } from "./store";
 import type { MessagingPage } from "./types";
+import type { AppContextMenu } from "$types/apps";
 
 export class MessagingAppRuntime extends AppProcess implements IMessagingAppRuntime {
   service: IMessagingInterface;
@@ -195,7 +196,7 @@ export class MessagingAppRuntime extends AppProcess implements IMessagingAppRunt
   compose() {
     this.Log(`compose`);
 
-    this.spawnOverlayApp("MessageComposer", this.pid);
+    this.spawnApp("MessageComposer", this.pid);
   }
 
   replyTo(message: ExpandedMessage) {
@@ -406,7 +407,7 @@ export class MessagingAppRuntime extends AppProcess implements IMessagingAppRunt
     MessageBox(
       {
         title: "Failed to get messages",
-        message: `ArcOS failed to get the messages for ${this.page()?.name || "an unknown page"}. Please refresh to try again.`,
+        message: `Sacruda failed to get the messages for ${this.page()?.name || "an unknown page"}. Please refresh to try again.`,
         buttons: [BTN_OKAY_SUG],
         image: "WarningIcon",
         sound: "arcos.dialog.warning",
@@ -447,6 +448,9 @@ export class MessagingAppRuntime extends AppProcess implements IMessagingAppRunt
     this.message.set(undefined);
     this.spawnApp(this.app.id, this.parentPid, this.pageId(), messageId);
   }
+
+  //#endregion
+  //#region SIGNATURES
 
   //#endregion
   //#region ATTACHMENTS

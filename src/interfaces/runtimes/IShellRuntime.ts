@@ -1,9 +1,8 @@
 import type { IArcFindService } from "$interfaces/services/IArcFindService";
 import type { ITrayHostService } from "$interfaces/services/ITrayHostService";
-import type { AppContextMenu } from "$types/apps/app";
+import type { AppContextMenu } from "$types/apps";
 import type { ReadableStore } from "$types/shared/writable";
 import type { RecursiveDirectoryReadReturn } from "$types/system/fs";
-import type { Workspace } from "$types/user";
 import type { IAppProcess } from "../IAppProcess";
 
 // !tpa
@@ -26,7 +25,6 @@ export interface IShellRuntime extends IAppProcess {
   stop(): Promise<boolean>;
   pinApp(appId: string): Promise<void>;
   unpinApp(appId: string): void;
-  deleteWorkspace(workspace: Workspace): Promise<void>;
   refreshStartMenu(): Promise<void>;
   exit(): Promise<void>;
   updateFullscreenCount(): void;

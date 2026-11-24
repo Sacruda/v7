@@ -1,10 +1,12 @@
 import type { IStateHandler } from "$interfaces/IStateHandler";
-import type { IWaveKernel } from "$interfaces/IWaveKernel";
+import type { IWaveKernel, KernelOpModuleName } from "$interfaces/IWaveKernel";
 import type { IKernelModule } from "$interfaces/modules/IKernelModule";
+import { Kernel } from "$ts/env";
 import { LogLevel } from "$types/shared/logging";
 import { Log } from "../../logging";
 
 export class KernelModule implements IKernelModule {
+  public static readonly identifier: string = "";
   protected readonly IS_KMOD = true;
   public id: string;
   protected state?: IStateHandler;
@@ -22,6 +24,7 @@ export class KernelModule implements IKernelModule {
   }
 
   async __init() {
+    Kernel.LogOperation("kmod", this.id as KernelOpModuleName, "__init");
     this.Log(`Calling _init`);
 
     await this._init();

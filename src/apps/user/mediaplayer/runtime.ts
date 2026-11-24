@@ -13,7 +13,7 @@ import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
 import { getItemNameFromPath, getParentDirectory, join } from "$ts/util/fs";
 import { UUID } from "$ts/util/uuid";
 import { Store } from "$ts/writable";
-import type { AppContextMenu, AppProcessData } from "$types/apps/app";
+import type { AppProcessData } from "$types/apps/app";
 import type { FileEntry } from "$types/system/fs";
 import type { RenderArgs } from "$types/system/process";
 import mime from "mime";
@@ -22,6 +22,7 @@ import { MediaPlayerAccelerators } from "./accelerators";
 import { MediaPlayerAltMenu } from "./altmenu";
 import TrayPopup from "./MediaPlayer/TrayPopup.svelte";
 import { LoopMode, type AudioFileMetadata, type MetadataConfiguration, type PlayerState } from "./types";
+import type { AppContextMenu } from "$types/apps";
 
 export class MediaPlayerRuntime extends AppProcess implements IMediaPlayerRuntime {
   private readonly METADATA_PATH = join(UserPaths.Configuration, "MediaPlayer", "Metadata.json");
@@ -414,7 +415,7 @@ export class MediaPlayerRuntime extends AppProcess implements IMediaPlayerRuntim
           {
             title: "Failed to load file",
             message:
-              "ArcOS failed to open the file you requested. It might be moved or the drive doesn't support direct file access.",
+              "Sacruda failed to open the file you requested. It might be moved or the drive doesn't support direct file access.",
             buttons: [BTN_OKAY_SUG],
             image: "MediaPlayerIcon",
             sound: "arcos.dialog.error",
@@ -702,7 +703,7 @@ export class MediaPlayerRuntime extends AppProcess implements IMediaPlayerRuntim
       const albumCoverMime = metadata?.coverImagePath ? mime.getType(metadata!.coverImagePath!) : null;
 
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: metadata?.title ?? "ArcOS Media Player",
+        title: metadata?.title ?? "Sacruda Media Player",
         artist: metadata?.artist ?? "Unknown Artist",
         album: metadata?.album ?? "Unknown Album",
         artwork: [

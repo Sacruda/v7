@@ -1,9 +1,10 @@
 <script lang="ts">
   import type { IBootScreenRuntime } from "$interfaces/runtimes/IBootScreenRuntime";
   import Icon from "$lib/Icon.svelte";
+  import ProcessPsa from "$lib/ProcessPsa.svelte";
   import Spinner from "$lib/Spinner.svelte";
   import { Logo } from "$ts/branding";
-  import { ArcOSVersion, BETA, Server } from "$ts/env";
+  import { SacrudaVersion, BETA, Server } from "$ts/env";
   import { ArcBuild } from "$ts/metadata/build";
   import { ArcMode } from "$ts/metadata/mode";
   import type { AppComponentProps } from "$types/apps/app";
@@ -40,7 +41,7 @@
     </div>
     <div class="row">
       <div class="key">A</div>
-      <div class="description">ArcTerm mode</div>
+      <div class="description">Terminal mode</div>
     </div>
   </div>
 </div>
@@ -50,11 +51,12 @@
 <div class="bottom">
   <Spinner height={30} stopped={!$progress} />
   <p class="status">{@html $status}</p>
+  <ProcessPsa {process} location="belowStatus"></ProcessPsa>
 </div>
 
 <div class="version">
   <span class="string">
-    v{ArcOSVersion}-{ArcMode()} ({ArcBuild()})
+    v{SacrudaVersion}-{ArcMode()} ({ArcBuild()})
   </span>
   {#if BETA}
     <span class="beta-pill">BETA</span>

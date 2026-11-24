@@ -9,14 +9,14 @@ export const MinesweeperDifficulties: Record<MinesweeperDifficulty, MinesweeperF
   Intermediate: {
     width: 16,
     height: 16,
-    mines: 40
+    mines: 40,
   },
   Expert: {
     width: 30,
     height: 16,
-    mines: 99
-  }
-}
+    mines: 99,
+  },
+};
 
 export const DefaultMinesweeperConfiguration: MinesweeperSettings = {
   field: {
@@ -28,15 +28,15 @@ export const DefaultMinesweeperConfiguration: MinesweeperSettings = {
   scores: {
     Beginner: {
       name: "Anonymous",
-      seconds: 999
+      seconds: 999,
     },
     Intermediate: {
       name: "Anonymous",
-      seconds: 999
+      seconds: 999,
     },
     Expert: {
       name: "Anonymous",
-      seconds: 999
-    }
-  }
-}
+      seconds: 999,
+    },
+  },
+};

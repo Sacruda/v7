@@ -1,12 +1,14 @@
 import type { IAppProcess, IAppProcessConstructor } from "$interfaces/IAppProcess";
 import type { IProcess } from "$interfaces/IProcess";
 import type { IUserDaemon } from "$interfaces/IUserDaemon";
+import type { ParsedPsaItem } from "$interfaces/modules/IPsaKernelModule";
 import type { IShellRuntime } from "$interfaces/runtimes/IShellRuntime";
 import type { IApplicationStorage } from "$interfaces/services/IApplicationStorage";
-import { Daemon, Env, Kernel, Stack, State, SysDispatch } from "$ts/env";
+import { Daemon, Env, Psa, Stack, State, SysDispatch } from "$ts/env";
 import { Process } from "$ts/kernel/mods/stack/process/instance";
 import { DefaultUserPreferences } from "$ts/user/default";
-import type { AppKeyCombinations } from "$types/apps/accelerator";
+import type { AppContextMenu, ContextMenuItem } from "$types/apps";
+import type { AppKeyboardCombinations } from "$types/apps/accelerator";
 import type { MaybePromise } from "$types/shared/common";
 import { LogLevel } from "$types/shared/logging";
 import type { ReadableStore } from "$types/shared/writable";
@@ -17,15 +19,14 @@ import type { Draggable } from "@neodrag/vanilla";
 import { mount } from "svelte";
 import {
   type App,
-  type AppContextMenu,
   type AppProcessData,
-  type ContextMenuItem,
   type ToastMessage,
 } from "../../types/apps/app";
 import { Sleep } from "../sleep";
 import { Store } from "../writable";
 import { AppRuntimeError } from "./error";
-export const bannedKeys = ["tab", "pagedown", "pageup"];
+
+export const KEY_IGNORE_LIST = ["tab", "pagedown", "pageup"];
 
 export class AppProcess extends Process implements IAppProcess {
   crashReason = "";
@@ -42,7 +43,7 @@ export class AppProcess extends Process implements IAppProcess {
   protected overlayStore: Record<string, App> = {};
   protected elevations: Record<string, ElevationData> = {};
   public renderArgs: RenderArgs = {};
-  public acceleratorStore: AppKeyCombinations = [];
+  public acceleratorStore: AppKeyboardCombinations = [];
   public readonly contextMenu: AppContextMenu = {};
   public altMenu = Store<ContextMenuItem[]>([]);
   public windowFullscreen = Store<boolean>(false);
@@ -89,9 +90,7 @@ export class AppProcess extends Process implements IAppProcess {
       if (this.pid === pid) this.windowFullscreen.set(true);
     });
 
-    const preferences = this.userPreferences();
-
-    if (!preferences.appPreferences[app.id]) {
+    if (!this.userPreferences().appPreferences[app.id]) {
       this.userPreferences.update((v) => {
         v.appPreferences[app.id] = {};
 
@@ -122,8 +121,6 @@ export class AppProcess extends Process implements IAppProcess {
 
   async closeWindow(kill = true) {
     this.Log(`Closing window ${this.pid}`);
-
-    // Stack.renderer?.focusedPid.set(this.pid);
 
     const canClose = this._disposed || (this.onClose ? await this.onClose() : true);
 
@@ -169,7 +166,7 @@ export class AppProcess extends Process implements IAppProcess {
 
   async __render__(body: HTMLDivElement) {
     this.STATE = "rendering";
-    this.startAcceleratorListener();
+    this.startKeyboardShortcutListener();
 
     if (this.userPreferences().disabledApps.includes(this.app.id)) {
       if (this.safeMode) {
@@ -203,7 +200,6 @@ export class AppProcess extends Process implements IAppProcess {
         props: {
           process: this,
           pid: this.pid,
-          kernel: Kernel,
           app: this.app.data,
           windowTitle: this.windowTitle,
           windowIcon: this.windowIcon,
@@ -219,22 +215,15 @@ export class AppProcess extends Process implements IAppProcess {
 
   async CrashDetection() {
     while (true) {
-      if (this.crashReason) {
-        throw new AppRuntimeError(this.crashReason);
-      }
-
-      if (this._disposed) {
-        break;
-      }
+      if (this.crashReason) throw new AppRuntimeError(this.crashReason);
+      if (this._disposed) break;
 
       await Sleep(1); // prevent hanging bleh
     }
   }
 
   getSingleton(): this[] {
-    const { renderer } = Stack;
-
-    return (renderer?.getAppInstances(this.app.data.id, this.pid) || []) as this[];
+    return (Stack.renderer?.getAppInstances(this.app.data.id, this.pid) || []) as this[];
   }
 
   async closeIfSecondInstance(): Promise<this | undefined> {
@@ -243,19 +232,18 @@ export class AppProcess extends Process implements IAppProcess {
         "Violation: only call closeIfSecondInstance in IAppProcess.render so that it doesn't hang the stack."
       );
     }
+
     this.Log("Closing if second instance");
 
     const instances = this.getSingleton();
+    if (!instances.length) return undefined;
 
-    if (instances.length) {
-      await this.killSelf();
+    await this.killSelf();
 
-      if (!this.app.data.core) Stack.renderer?.focusPid(instances[0].pid);
+    if (!this.app.data.core) Stack.renderer?.focusPid(instances[0].pid);
+    if (instances[0].app.desktop) Daemon?.workspaces?.switchToDesktopByUuid(instances[0].app.desktop);
 
-      if (instances[0].app.desktop) Daemon?.workspaces?.switchToDesktopByUuid(instances[0].app.desktop);
-    }
-
-    return instances.length ? instances[0] : undefined;
+    return instances[0];
   }
 
   getWindow() {
@@ -263,9 +251,7 @@ export class AppProcess extends Process implements IAppProcess {
       throw new AppRuntimeError("Violation: Called getWindow during process startup: there's no window at this point.");
     }
 
-    const window = document.querySelector(`div.window[data-pid="${this.pid}"]`);
-
-    return (window as HTMLDivElement) || undefined;
+    return document.querySelector<HTMLDivElement>(`div.window[data-pid="${this.pid}"]`)!;
   }
 
   getBody() {
@@ -273,41 +259,35 @@ export class AppProcess extends Process implements IAppProcess {
       throw new AppRuntimeError("Violation: Called getBody during process startup: there's no window body at this point.");
     }
 
-    const body = document.querySelector(`div.window[data-pid="${this.pid}"] > div.body`);
-
-    return (body as HTMLDivElement) || undefined;
+    return document.querySelector<HTMLDivElement>(`div.window[data-pid="${this.pid}"] > div.body`)!;
   }
 
   hasOverlays(): boolean {
-    const window = this.getWindow();
-
-    if (!window) return false;
-
-    return window.querySelectorAll("div.window-overlay-wrapper").length > 0;
+    return !!this.getWindow()?.querySelectorAll("div.window-overlay-wrapper")?.length;
   }
 
-  public startAcceleratorListener() {
-    this.Log("Starting listener!");
+  public startKeyboardShortcutListener() {
+    this.Log("Starting keyboard shortcut listener!");
 
-    document.addEventListener("keydown", (e) => this.processor(e));
+    document.addEventListener("keydown", (e) => this.processKeyboardEvent(e));
   }
 
-  public stopAcceleratorListener() {
-    this.Log("Stopping listener!", LogLevel.warning);
+  public stopKeyboardShortcutListener() {
+    this.Log("Stopping keyboard shortcut listener!", LogLevel.warning);
 
-    document.removeEventListener("keydown", (e) => this.processor(e));
+    document.removeEventListener("keydown", (e) => this.processKeyboardEvent(e));
   }
 
   public async __stop(): Promise<any> {
     this.Log(`STOPPING PROCESS`);
 
-    this.stopAcceleratorListener();
+    this.stopKeyboardShortcutListener();
     this.shell?.trayHost?.disposeProcessTrayIcons(this.pid);
 
     return await this.stop();
   }
 
-  private async processor(e: KeyboardEvent) {
+  private async processKeyboardEvent(e: KeyboardEvent) {
     if (!e.key || this.hasOverlays() || this._disposed) return;
 
     let focusingTextArea = false;
@@ -318,7 +298,7 @@ export class AppProcess extends Process implements IAppProcess {
       if (document.activeElement === textarea) focusingTextArea = true;
     }
 
-    if (!focusingTextArea && bannedKeys.includes(e.key.toLowerCase()) && State?.currentState === "desktop") {
+    if (!focusingTextArea && KEY_IGNORE_LIST.includes(e.key.toLowerCase()) && State?.currentState === "desktop") {
       e.preventDefault();
 
       return false;
@@ -353,7 +333,6 @@ export class AppProcess extends Process implements IAppProcess {
 
   public unfocusActiveElement() {
     const el = document.activeElement as HTMLButtonElement;
-
     if (!el || el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el.isContentEditable) return;
 
     el.blur();
@@ -416,5 +395,9 @@ export class AppProcess extends Process implements IAppProcess {
 
   blink() {
     this.blinking.set(!this.blinking());
+  }
+
+  GetPsa(location?: string): ParsedPsaItem | undefined {
+    return Psa.GetPsaFor(this.app.id, location);
   }
 }

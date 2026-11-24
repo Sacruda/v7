@@ -4,7 +4,7 @@ import type { IShellRuntime } from "$interfaces/runtimes/IShellRuntime";
 import type { ITrayIconProcess } from "$interfaces/services/ITrayHostService";
 import { Daemon, Env, Stack } from "$ts/env";
 import { UserPaths } from "$ts/user/store";
-import type { App, AppContextMenu } from "$types/apps/app";
+import type { App, AppContextMenu } from "$types/apps";
 
 export function ShellContextMenu(runtime: IShellRuntime): AppContextMenu {
   return {
@@ -195,6 +195,15 @@ export function ShellContextMenu(runtime: IShellRuntime): AppContextMenu {
           if (!proc) return;
 
           runtime.spawnOverlayApp("AppInfo", runtime.pid, proc.app.id);
+        },
+      },
+      {
+        caption: "Process info",
+        icon: "book",
+        action: (proc: IAppProcess) => {
+          if (!proc) return;
+
+          runtime.spawnOverlayApp("ProcessInfoApp", runtime.pid, proc);
         },
       },
       {

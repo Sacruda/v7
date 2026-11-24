@@ -3,13 +3,12 @@ import { FirstRunRuntime } from "$apps/components/firstrun/runtime";
 import { TotpAuthGuiApp } from "$apps/components/totpauthgui/TotpAuthGui";
 import type { IAppProcess } from "$interfaces/IAppProcess";
 import type { IUserDaemon } from "$interfaces/IUserDaemon";
-import type { IServerManager } from "$interfaces/modules/IServerManager";
 import type { IUserConnector } from "$interfaces/modules/server/IUserConnector";
 import type { IFirstRunRuntime } from "$interfaces/runtimes/IFirstRunRuntime";
 import type { ILoginAppRuntime } from "$interfaces/runtimes/ILoginAppRuntime";
 import { AppProcess } from "$ts/apps/process";
 import { UserDaemon } from "$ts/daemon";
-import { Env, GetConnector, getKMod, SoundBus, Stack, State, SysDispatch } from "$ts/env";
+import { Env, GetConnector, Server, SoundBus, Stack, State, SysDispatch } from "$ts/env";
 import { ProfilePictures } from "$ts/images/pfp";
 import { Sleep } from "$ts/sleep";
 import { LoginUser } from "$ts/user/auth";
@@ -36,7 +35,6 @@ export class LoginAppRuntime extends AppProcess implements ILoginAppRuntime {
   public hideProfileImage = Store<boolean>(false);
   public persistence = Store<PersistenceInfo | undefined>();
   public serverInfo = Store<ServerInfo>();
-  public server: IServerManager;
   public safeMode = false;
   public loginProps?: LoginAppProps;
   private type = "";
@@ -46,10 +44,7 @@ export class LoginAppRuntime extends AppProcess implements ILoginAppRuntime {
   constructor(pid: number, parentPid: number, app: AppProcessData, props?: LoginAppProps) {
     super(pid, parentPid, app);
 
-    const server = getKMod<IServerManager>("server");
-
-    this.server = server;
-    this.serverInfo.set(server.serverInfo!);
+    this.serverInfo.set(Server.serverInfo!);
     this.safeMode = !!(props?.safeMode || Env.get("safemode"));
 
     if (this.safeMode) Env.set("safemode", true);
@@ -237,6 +232,9 @@ export class LoginAppRuntime extends AppProcess implements ILoginAppRuntime {
     };
 
     if (userDaemon) {
+      broadcast("Notifying login activity");
+      await userDaemon.activity?.logActivity("shutdown");
+
       broadcast("Stopping Service Host");
       await userDaemon.serviceHost?.spinDown(broadcast);
 
@@ -268,6 +266,9 @@ export class LoginAppRuntime extends AppProcess implements ILoginAppRuntime {
     this.loadingStatus.set(`Restarting...`);
 
     if (userDaemon) {
+      broadcast("Notifying login activity");
+      await userDaemon.activity?.logActivity("shutdown");
+
       broadcast("Stopping Service Host");
       await userDaemon.serviceHost?.spinDown(broadcast);
 
@@ -290,23 +291,33 @@ export class LoginAppRuntime extends AppProcess implements ILoginAppRuntime {
   //#endregion
   //#region CREDENTIALS
 
-  async proceed(username: string, password: string) {
-    this.Log(`Trying login of '${username}'`);
+  async proceed(identifier: string, password: string) {
+    this.Log(`Trying login of '${identifier}'`);
 
-    this.loadingStatus.set(`Hi, ${username}!`);
-
-    const tokenResult = await LoginUser(username, password);
+    const tokenResult = await LoginUser(identifier, password);
 
     if (!tokenResult.success) {
       this.loadingStatus.set("");
-      this.errorMessage.set(tokenResult.errorMessage ?? "Username or password incorrect");
+      this.errorMessage.set(tokenResult.errorMessage ?? "Username/Email or password incorrect");
 
       this.updateServerStuff();
 
       return;
     }
 
-    await this.startDaemon(tokenResult.result!, username);
+    const userInfo = await this.validateUserToken(tokenResult.result!);
+    if (!userInfo) {
+      this.resetCookies();
+
+      this.loadingStatus.set("");
+      this.errorMessage.set("Session token is invalid.");
+
+      return;
+    }
+
+    this.loadingStatus.set(`Hi, ${userInfo.username}!`);
+
+    await this.startDaemon(tokenResult.result!, userInfo.username);
   }
 
   private saveToken(userDaemon: IUserDaemon) {
@@ -433,7 +444,7 @@ export class LoginAppRuntime extends AppProcess implements ILoginAppRuntime {
   savePersistence(username: string, profilePicture: string, loginWallpaper?: string) {
     localStorage.setItem(
       "arcLoginPersistence",
-      JSON.stringify({ username, profilePicture, loginWallpaper, serverUrl: this.server.url })
+      JSON.stringify({ username, profilePicture, loginWallpaper, serverUrl: Server.url })
     );
   }
 
@@ -447,10 +458,8 @@ export class LoginAppRuntime extends AppProcess implements ILoginAppRuntime {
   }
 
   updateServerStuff() {
-    if (this.server.serverInfo) this.serverInfo.set(this.server.serverInfo);
-    this.DEFAULT_WALLPAPER.set(
-      this.serverInfo()?.loginWallpaper ? `${this.server.url}/loginbg${authcode()}` : Wallpapers.img18.url
-    );
+    if (Server.serverInfo) this.serverInfo.set(Server.serverInfo);
+    this.DEFAULT_WALLPAPER.set(this.serverInfo()?.loginWallpaper ? `${Server.url}/loginbg${authcode()}` : Wallpapers.img39.url);
     this.loginBackground.set(this.DEFAULT_WALLPAPER());
   }
 

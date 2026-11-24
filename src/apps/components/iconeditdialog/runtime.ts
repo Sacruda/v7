@@ -29,7 +29,7 @@ export class IconEditDialogRuntime extends AppProcess implements IIconEditDialog
 
     this.iconName = name;
     this.returnId = returnId;
-    
+
     if (initialValue) {
       if (initialValue.startsWith("@") && initialValue.includes("::")) {
         const split = initialValue.split("::");

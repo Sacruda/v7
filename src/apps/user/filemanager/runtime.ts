@@ -6,11 +6,12 @@ import { Daemon, Fs, SysDispatch } from "$ts/env";
 import { SharedDrive } from "$ts/kernel/mods/fs/drives/share";
 import { AdminScopes } from "$ts/servicehost/services/AdminBootstrapper/store";
 import { SystemFolders, UserPathCaptions, UserPaths } from "$ts/user/store";
-import { Plural, sortByKey } from "$ts/util";
-import { BTN_OKAY_SUG, ConditionalButton, GetConfirmation, MessageBox } from "$ts/util/dialog";
+import { sortByKey } from "$ts/util";
+import { BTN_OKAY_SUG, GetConfirmation, MessageBox } from "$ts/util/dialog";
 import { DownloadFile, getDriveLetter, getItemNameFromPath, getParentDirectory, join } from "$ts/util/fs";
 import { Store } from "$ts/writable";
-import type { AppContextMenu, AppProcessData } from "$types/apps/app";
+import type { AppContextMenu } from "$types/apps";
+import type { AppProcessData } from "$types/apps/app";
 import { LogLevel } from "$types/shared/logging";
 import { DefaultUserQuota, type DirectoryReadReturn, type FolderEntry } from "$types/system/fs";
 import type { RenderArgs } from "$types/system/process";
@@ -41,7 +42,7 @@ export class FileManagerRuntime extends AppProcess implements IFileManagerRuntim
   directoryListing = Store<HTMLDivElement>();
   virtualLocations: Record<string, VirtualFileManagerLocation> = {
     my_arcos: {
-      name: "My ArcOS",
+      name: "My Sacruda",
       icon: "computer",
       component: MyArcOs as any,
     },
@@ -463,7 +464,7 @@ export class FileManagerRuntime extends AppProcess implements IFileManagerRuntim
           {
             title: "Failed to download",
             message:
-              "ArcOS can't find the file you are trying to download. It might be moved or otherwise unavailable. Please try again.",
+              "Sacruda can't find the file you are trying to download. It might be moved or otherwise unavailable. Please try again.",
             buttons: [
               {
                 caption: "Okay",
@@ -485,6 +486,7 @@ export class FileManagerRuntime extends AppProcess implements IFileManagerRuntim
 
       // Check if the user is trying to download a folder
       if (!file && dir) {
+        prog.stop();
         return;
       }
 
@@ -686,7 +688,7 @@ export class FileManagerRuntime extends AppProcess implements IFileManagerRuntim
     MessageBox(
       {
         title: `${name}`,
-        message: `This folder is required for ArcOS to run properly. If it or any of its files are missing, ArcOS might crash or become unstable. You cannot delete this item.<br><br><details><summary>Show path</summary><code class='block'>${path}</code></details>`,
+        message: `This folder is required for Sacruda to run properly. If it or any of its files are missing, Sacruda might crash or become unstable. You cannot delete this item.<br><br><details><summary>Show path</summary><code class='block'>${path}</code></details>`,
         buttons: [BTN_OKAY_SUG],
         sound: "arcos.dialog.warning",
         image: "InfoIcon",

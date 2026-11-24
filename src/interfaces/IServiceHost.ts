@@ -1,4 +1,5 @@
 import type { ReadableServiceStore, Service, ServiceChangeResult, ServiceStore } from "$types/services/service";
+import type { Constructs } from "./common";
 import type { IProcess } from "./IProcess";
 import type { IServerConnector } from "./modules/IServerManager";
 
@@ -8,6 +9,10 @@ export interface IBaseService extends IProcess {
   activated: boolean;
   deactivate(broadcast?: (m: string) => void): Promise<void>;
   GetConnector<T extends IServerConnector>(name: string): T;
+}
+
+export interface IBaseServiceConstructor extends Constructs<IBaseService> {
+  identifier: string;
 }
 
 export interface IServiceHost extends IProcess {
@@ -34,7 +39,7 @@ export type ServiceIdentifier =
   | "BugHuntUsp"
   | "ShareMgmt"
   | "AppStorage"
-  | "ArcFindSvc"
+  | "SacrudaSearchSvc"
   | "SystemShortcutsSvc"
   | "ProtoService"
   | "TrayHostSvc"

@@ -1,14 +1,14 @@
 import type { IStateHandler } from "$interfaces/IStateHandler";
-import type { IWaveKernel } from "$interfaces/IWaveKernel";
-import type { IProcessHandler } from "$interfaces/modules/IProcessHandler";
-import type { ISystemDispatch } from "$interfaces/modules/ISystemDispatch";
+import type { IWaveKernel, KernelOperationLogItem, KernelOpModuleName, KernelOpModuleType } from "$interfaces/IWaveKernel";
+import type { IStackKernelModule } from "$interfaces/modules/IStackKernelModule";
 import { __Console__ } from "$ts/console";
-import { ArcOSVersion, SetCurrentKernel, SetKernelExports } from "$ts/env";
+import { SacrudaVersion, SetCurrentKernel, SysDispatch, UpdateKernelExports } from "$ts/env";
 import { JsExec } from "$ts/jsexec";
 import { getBuild } from "$ts/metadata/build";
 import { ChangeLogs } from "$ts/metadata/changelog";
 import { getLicense } from "$ts/metadata/license";
 import { getMode } from "$ts/metadata/mode";
+import { HtmlUtil } from "$ts/util/html";
 import { LogLevel, ShortLogLevelCaptions, type LogItem } from "../../types/shared/logging";
 import { handleGlobalErrors } from "../error";
 import { InitProcess } from "./init";
@@ -20,6 +20,7 @@ export class WaveKernel implements IWaveKernel {
   public modules: string[] = [];
   public PANICKED = false;
   public Logs: LogItem[] = [];
+  public OperationLog: KernelOperationLogItem[] = [];
   public startMs: number;
   public init: InitProcess | undefined;
   public state: IStateHandler | undefined;
@@ -35,7 +36,6 @@ export class WaveKernel implements IWaveKernel {
     this.Log("KERNEL", "Constructing new Kernel. Have fun zottel.");
 
     handleGlobalErrors();
-
     SetCurrentKernel(this);
 
     if (import.meta.env.DEV) {
@@ -43,12 +43,15 @@ export class WaveKernel implements IWaveKernel {
       win.kernel = this;
       win.JsExec = JsExec;
     }
+
+    this.LogOperation("kernel", "$", "constructor");
   }
 
   async panic(reason: string, brief?: string) {
     if (this.PANICKED) return;
 
     this.PANICKED = true;
+    this.LogOperation("kernel", "$", "panic");
 
     const state = this.state;
 
@@ -67,6 +70,7 @@ export class WaveKernel implements IWaveKernel {
 
   async _init() {
     EchoIntro();
+    this.LogOperation("kernel", "$", "_init");
 
     window.__DW_STATUS__ = "async WaveKernel._init";
     window.__DW_INIT__ = true;
@@ -81,13 +85,15 @@ export class WaveKernel implements IWaveKernel {
     await getLicense();
     await ChangeLogs.refreshChangelogs();
 
-    this.Log(`ArcOS`, `***** [v7 -> ArcOS InDev v${ArcOSVersion}-${this.ARCOS_MODE}_${this.ARCOS_BUILD}] *****`);
+    HtmlUtil.GetStateLoader().innerText += ".";
+
+    this.Log(`Sacruda`, `***** [v7 -> Sacruda InDev v${SacrudaVersion}-${this.ARCOS_MODE}_${this.ARCOS_BUILD}] *****`);
 
     await this._kernelModules();
 
-    SetKernelExports();
+    // SetKernelExports(this);
 
-    const stack = this.getModule<IProcessHandler>("stack");
+    const stack = this.getModule<IStackKernelModule>("stack");
 
     this.init = await stack.spawn<InitProcess>(InitProcess, undefined, "SYSTEM");
     this.initPid = this.init?.pid ?? 0;
@@ -99,6 +105,7 @@ export class WaveKernel implements IWaveKernel {
   }
 
   getModule<T = any>(id: string, dontCrash = false): T {
+    this.LogOperation("kernel", "$", "getModule");
     const mod = (this as any)[id];
     const result = this.modules.includes(id) && mod && mod.id === id ? (mod as T) : undefined;
 
@@ -108,6 +115,7 @@ export class WaveKernel implements IWaveKernel {
   }
 
   private async _kernelModules() {
+    this.LogOperation("kernel", "$", "_kernelModules");
     this.Log(`KERNEL`, `Loading kernel modules`);
 
     for (const [id, mod] of Object.entries(KernelModules)) {
@@ -117,6 +125,7 @@ export class WaveKernel implements IWaveKernel {
       await (this as any)[id].__init();
 
       this.modules.push(id);
+      UpdateKernelExports(this);
       __Console__.timeEnd(`kernel module ${id}`);
     }
   }
@@ -140,11 +149,19 @@ export class WaveKernel implements IWaveKernel {
       [LogLevel.critical]: __Console__.error.bind(__Console__),
     };
 
-    const dispatch = this.getModule<ISystemDispatch>("dispatch", true);
-    dispatch?.dispatch<[LogItem]>("kernel-log", [data]);
+    SysDispatch?.dispatch<[LogItem]>("kernel-log", [data]);
 
     mapping[level](
       `[${(timestamp - this.startMs).toString().padStart(10, "0")}] ${ShortLogLevelCaptions[level]} ${source}: ${message}`
     );
+  }
+
+  public LogOperation(modType: KernelOpModuleType, module: KernelOpModuleName, event: string): void {
+    this.OperationLog.push({
+      timestamp: new Date(),
+      moduleType: modType,
+      module,
+      event,
+    });
   }
 }

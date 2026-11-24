@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useLocalExpansion } from "$apps/user/processes/expansion";
   import type { IAppProcess } from "$interfaces/IAppProcess";
   import type { IProcess } from "$interfaces/IProcess";
   import type { IProcessManagerRuntime } from "$interfaces/runtimes/IProcessManagerRuntime";
@@ -17,10 +18,14 @@
     proc,
     process,
     orphan = false,
-  }: { pid: number; proc: IProcess; process: IProcessManagerRuntime; orphan?: boolean } = $props();
+    indent = 0,
+  }: { pid: number; proc: IProcess; process: IProcessManagerRuntime; orphan?: boolean; indent?: number } = $props();
 
   const { selected } = process;
   const { focusedPid } = Stack.renderer!;
+
+  const { isExpanded: checkExpanded, toggle } = useLocalExpansion();
+  const KEY = `lproc:${proc.pid}`;
 
   let name = $state<string>();
   let icon = $state<string>();
@@ -29,6 +34,7 @@
   let closing = $state<boolean>(false);
   let memory = $state<number>();
   let memoryInterval = $state<NodeJS.Timeout>();
+  let isExpanded = $derived(checkExpanded(KEY));
 
   onMount(() => {
     Stack.store.subscribe(() => {
@@ -36,6 +42,10 @@
     });
 
     memory = proc.MEMORY; // only once because laggy
+
+    if (indent === 0 && !isExpanded) {
+      toggle(KEY);
+    }
 
     if (ProcessesHelper.IsAnyAppProcess(proc)) {
       const { app } = proc;
@@ -66,10 +76,14 @@
 {#if !proc._disposed}
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div
+  <tr
     class="row"
+    style="--indent: {indent};"
     class:closing
-    onclick={() => ($selected = `proc#${pid}`)}
+    onclick={() => {
+      toggle(KEY);
+      $selected = `proc#${pid}`;
+    }}
     use:contextMenu={[
       [
         {
@@ -110,25 +124,30 @@
     class:orphan
     class:critical={proc._criticalProcess}
   >
-    <div class="segment name">
-      <Icon icon={icon ?? "DefaultIcon"} />
-      <span>{name}{orphan ? " (orphaned)" : ""}</span>
-      <span class="lucide icon-{ProcessStateIcons[proc.STATE]}"></span>
-    </div>
-    <div class="segment pid" class:flagged={$focusedPid === proc.pid}>
-      <Icon icon="FlagIcon" className="flag" />
-      <span>{proc.pid}</span>
-    </div>
-    <div class="segment memory">
+    <td class="name">
+      <div>
+        <span class="lucide" class:icon-chevron-right={!isExpanded} class:icon-chevron-down={isExpanded}></span>
+        <Icon icon={icon ?? "DefaultIcon"} />
+        <span>{name}{orphan ? " (orphaned)" : ""}</span>
+        <span class="lucide icon-{ProcessStateIcons[proc.STATE]}"></span>
+      </div>
+    </td>
+    <td class="pid" class:flagged={$focusedPid === proc.pid}>
+      <div>
+        <Icon icon="FlagIcon" className="flag" />
+        <span>{proc.pid}</span>
+      </div>
+    </td>
+    <td class="memory">
       <span>{formatBytes(memory ?? 0)}</span>
-    </div>
-    <div class="segment app-id" title={appId}>{appId || "-"}</div>
-  </div>
-  {#if children.size}
-    <div class="indent" data-pid={proc.pid}>
-      {#each [...children] as [pid, proc], i (`${i}-${pid} ${proc.name}`)}
-        <Row {pid} {proc} {process} />
-      {/each}
-    </div>
+    </td>
+    <td class="app-id" title={appId}>
+      <span>{appId || "-"}</span>
+    </td>
+  </tr>
+  {#if children.size && isExpanded}
+    {#each [...children] as [pid, proc], i (`${i}-${pid} ${proc.name}`)}
+      <Row {pid} {proc} {process} indent={indent + 1} />
+    {/each}
   {/if}
 {/if}

@@ -1,11 +1,12 @@
 #messageBox {
   width: max-content !important;
+  height: fit-content !important;
   display: flex;
   flex-direction: column;
 }
 
 #messageBox.overlay {
-  max-width: 550px !important;
+  max-width: 580px !important;
   width: 90% !important;
 }
 
@@ -13,7 +14,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  height: fit-content;
 }
 
 #messageBox div.top {

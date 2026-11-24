@@ -17,6 +17,7 @@ export class MessageComposerRuntime extends AppProcess implements IMessageCompos
   sending = Store<boolean>(false);
   recipients = Store<string[]>([]);
   attachments = Store<Attachment[]>([]);
+  showPreview = Store<boolean>(false);
   title = Store<string>("");
   body = Store<string>("");
   replyId: string | undefined;
@@ -109,7 +110,7 @@ export class MessageComposerRuntime extends AppProcess implements IMessageCompos
 
   sendFailed(errorMessage?: string) {
     errorMessage ||=
-      "It might be too large, or none of the recipients exist. Please check the recipients or try shrinking it down, and then resend it. If it still doesn't work, contact an ArcOS administrator.";
+      "It might be too large, or none of the recipients exist. Please check the recipients or try shrinking it down, and then resend it. If it still doesn't work, contact an Sacruda administrator.";
 
     this.Log(`sendFailed`);
 
@@ -199,6 +200,13 @@ export class MessageComposerRuntime extends AppProcess implements IMessageCompos
     this.Log(`removeAttachment: ${uuid}`);
 
     this.attachments.update((v) => v.filter((a) => a.uuid !== uuid));
+  }
+
+  //#endregion
+  //#region SIGNATURES
+
+  addSignature() {
+    // stub
   }
 
   //#endregion

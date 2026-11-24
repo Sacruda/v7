@@ -11,9 +11,9 @@ export const SystemSettings: App = {
     icon: "SettingsIcon",
     appGroup: "systemTools",
   },
-  size: { w: 730, h: 560 },
-  minSize: { w: 730, h: 560 },
-  maxSize: { w: 1000, h: 800 },
+  size: { w: 810, h: 650 },
+  minSize: { w: 810, h: 650 },
+  maxSize: { w: 1080, h: 800 },
   position: { centered: true },
   state: {
     minimized: false,
@@ -24,7 +24,7 @@ export const SystemSettings: App = {
   },
   controls: {
     minimize: true,
-    maximize: false,
+    maximize: true,
     close: true,
   },
   assets: {

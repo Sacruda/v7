@@ -1,0 +1,81 @@
+#NewExecuteQuery > div.body div.where-clause {
+  align-items: center !important;
+
+  div.options {
+    display: flex;
+    align-items: center;
+    border: var(--win-border);
+    border-radius: 5px;
+    overflow: hidden;
+    height: 26px;
+
+    button.action-bar-icon-button {
+      width: 26px;
+      height: 24px;
+      border-radius: 0;
+      min-width: unset;
+      padding: 0;
+      outline: none !important;
+    }
+
+    input,
+    select {
+      border-top: 0;
+      border-bottom: 0;
+
+      &:first-child {
+        border-left: 0;
+      }
+
+      &:last-child {
+        border-right: 0;
+      }
+
+      &:not([type="checkbox"]) {
+        background-color: var(--button-bg);
+        height: 26px;
+        padding: 0 5px;
+        border-radius: 0;
+      }
+
+      + select,
+      + input:not([type="checkbox"]) {
+        border-left: 0;
+      }
+    }
+
+    p,
+    label {
+      padding: 0 8px;
+      line-height: 26px;
+    }
+  }
+
+  div.actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    button {
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 7px;
+    }
+  }
+
+  &.value-from-column {
+    padding: 0 10px !important;
+    padding-left: 40px !important;
+    height: 40px;
+    background-color: var(--button-glass-active-bg);
+
+    h1 {
+      width: calc(100px - 25px) !important;
+    }
+  }
+}

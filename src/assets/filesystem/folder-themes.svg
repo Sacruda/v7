@@ -17,7 +17,8 @@
   <path opacity="0.1"
     d="M3 3C2.446 3 2 3.446 2 4V4.5C2 3.946 2.446 3.5 3 3.5H8.5C10 3.5 10.5 5.5 12 5.5H21C21.554 5.5 22 5.946 22 6.5V6C22 5.446 21.554 5 21 5H12C10.5 5 10 3 8.5 3H3Z"
     fill="white" />
-  <mask id="mask0_1298_44" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="6" y="11" width="12" height="9">
+  <mask id="mask0_1298_44" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="6" y="11"
+    width="12" height="9">
     <path d="M18 11H6V20H18V11Z" fill="white" />
   </mask>
   <g mask="url(#mask0_1298_44)">

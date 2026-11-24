@@ -1,5 +1,5 @@
-import type { AppKeyCombinations } from "$types/apps/accelerator";
-import type { AppContextMenu, AppProcessData, AppProcessSpawnOptions, ContextMenuItem, ToastMessage } from "$types/apps/app";
+import type { AppContextMenu, AppProcessData, AppProcessSpawnOptions, ContextMenuItem, ToastMessage } from "$types/apps";
+import type { AppKeyboardCombinations } from "$types/apps/accelerator";
 import type { MaybePromise } from "$types/shared/common";
 import type { ReadableStore } from "$types/shared/writable";
 import type { RenderArgs } from "$types/system/process";
@@ -7,6 +7,8 @@ import type { UserPreferences } from "$types/user";
 import type { Draggable } from "@neodrag/vanilla";
 import type { Constructs } from "./common";
 import type { IProcess } from "./IProcess";
+import type { ParsedPsaItem } from "./modules/IPsaKernelModule";
+import type { IShellRuntime } from "./runtimes/IShellRuntime";
 import type { IApplicationStorage } from "./services/IApplicationStorage";
 
 // !tpa
@@ -22,12 +24,13 @@ export interface IAppProcess extends IProcess {
   toastMessage: ReadableStore<ToastMessage | undefined>;
   safeMode: boolean;
   renderArgs: RenderArgs;
-  acceleratorStore: AppKeyCombinations;
+  acceleratorStore: AppKeyboardCombinations;
   readonly contextMenu: AppContextMenu;
   altMenu: ReadableStore<ContextMenuItem[]>;
   windowFullscreen: ReadableStore<boolean>;
   draggable: Draggable | undefined;
   blinking: ReadableStore<boolean>;
+  get shell(): IShellRuntime | undefined;
   onClose(): Promise<boolean>;
   ShowToast(toast: ToastMessage, durationMs?: number): Promise<void>;
   HideToast(): Promise<void>;
@@ -40,8 +43,8 @@ export interface IAppProcess extends IProcess {
   getWindow(): HTMLDivElement;
   getBody(): HTMLDivElement;
   hasOverlays(): boolean;
-  startAcceleratorListener(): void;
-  stopAcceleratorListener(): void;
+  startKeyboardShortcutListener(): void;
+  stopKeyboardShortcutListener(): void;
   __stop(): Promise<any>;
   unfocusActiveElement(): void;
   spawnOverlay(id: string, ...args: any[]): Promise<boolean>;
@@ -61,6 +64,7 @@ export interface IAppProcess extends IProcess {
   getIconCached(id: string): string;
   getIconStore(id: string): ReadableStore<string>;
   blink(): void;
+  GetPsa(location?: string): ParsedPsaItem | undefined;
 }
 
 export interface IAppProcessConstructor extends Constructs<IAppProcess> {

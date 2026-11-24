@@ -4,14 +4,14 @@
   import type { BugReport } from "$types/server/bughunt";
   import type { ReadableStore } from "$types/shared/writable";
   import { onMount } from "svelte";
-  import ViewBugReport from "../ViewBugReport.svelte";
+  import ViewBugReport from "../AdminViewBugReportPage.svelte";
 
   const { process, id, quickView }: { process: IAdminPortalRuntime; id: string; quickView: ReadableStore<string> } = $props();
   let report = $state<BugReport>();
   let loading = $state<boolean>(true);
 
   onMount(async () => {
-    report = await process.admin.getBugReport(id);
+    report = (await process.admin.getBugReport(id))?.report;
 
     loading = false;
   });

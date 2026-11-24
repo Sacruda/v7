@@ -1,17 +1,18 @@
 import type { IFilesystemDrive } from "$interfaces/IFilesystemDrive";
 import type { IWriterRuntime } from "$interfaces/runtimes/IWriterRuntime";
 import { AppProcess } from "$ts/apps/process";
-import { Daemon, Fs } from "$ts/env";
+import { Daemon, Fs, Printer } from "$ts/env";
 import { Sleep } from "$ts/sleep";
 import { UserPaths } from "$ts/user/store";
 import { arrayBufferToText, textToBlob } from "$ts/util/convert";
 import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
 import { getItemNameFromPath, getParentDirectory } from "$ts/util/fs";
 import { Store } from "$ts/writable";
-import type { AppKeyCombinations } from "$types/apps/accelerator";
+import type { AppKeyboardCombinations } from "$types/apps/accelerator";
 import type { App, AppProcessData } from "$types/apps/app";
 import { WriterAccelerators } from "./accelerators";
 import { WriterAltMenu } from "./altmenu";
+import PrintArea from "./PrintArea.svelte";
 import { ReplaceOverlay } from "./replace/metadata";
 
 export class WriterRuntime extends AppProcess implements IWriterRuntime {
@@ -28,7 +29,7 @@ export class WriterRuntime extends AppProcess implements IWriterRuntime {
   protected overlayStore: Record<string, App> = {
     replace: ReplaceOverlay,
   };
-  public acceleratorStore: AppKeyCombinations = WriterAccelerators(this);
+  public acceleratorStore: AppKeyboardCombinations = WriterAccelerators(this);
 
   //#region LIFECYCLE
 
@@ -232,5 +233,21 @@ export class WriterRuntime extends AppProcess implements IWriterRuntime {
     this.Log(`selectAll`);
 
     this.input()?.select();
+  }
+
+  async print(): Promise<void> {
+    const lockResult = Printer.StartPrintTransaction(this, {
+      whitespace: "pre-wrap",
+      documentTitle: this.filename(),
+      paddingPx: 15,
+      invert: true,
+      monospace: !!this.userPreferences().appPreferences.writer.fixedWidth,
+    });
+
+    if (!lockResult.success) return;
+
+    const lock = lockResult.result!;
+    lock.LoadComponent(this, PrintArea);
+    await lock.Finalize(this);
   }
 }

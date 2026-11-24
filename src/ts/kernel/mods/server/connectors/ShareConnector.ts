@@ -2,7 +2,7 @@ import type { ICommandResult } from "$interfaces/ICommandResult";
 import type { IShareConnector } from "$interfaces/modules/server/IShareConnector";
 import { Server } from "$ts/env";
 import { CommandResult } from "$ts/result";
-import { ToAxiosProgress } from "$ts/util";
+import { authcode, ToAxiosProgress } from "$ts/util";
 import { arrayBufferToBlob } from "$ts/util/convert";
 import { toForm } from "$ts/util/form";
 import { getItemNameFromPath, join } from "$ts/util/fs";
@@ -11,7 +11,7 @@ import {
   type DirectoryReadReturn,
   type ExtendedStat,
   type FilesystemProgressCallback,
-  type FsAccess,
+  type FileAccessor,
   type RecursiveDirectoryReadReturn,
   type UserQuota,
 } from "$types/system/fs";
@@ -81,9 +81,6 @@ export class ShareConnector extends ServerConnector implements IShareConnector {
   }
 
   async MvPost(shareId: string, source: string, destination: string): Promise<ICommandResult> {
-    const sourceFilename = getItemNameFromPath(source);
-    destination = destination.endsWith(sourceFilename) ? destination : join(destination, sourceFilename);
-
     try {
       return CommandResult.FromResponse(await this.server.post(`/mv/${shareId}/${source}`, toForm({ destination })));
     } catch (e) {
@@ -109,7 +106,7 @@ export class ShareConnector extends ServerConnector implements IShareConnector {
 
   async AccessorPost(shareId: string, path: string): Promise<ICommandResult<string>> {
     try {
-      const response = CommandResult.FromResponse(await this.server.post<FsAccess>(`/accessor/${shareId}/${path}`));
+      const response = CommandResult.FromResponse(await this.server.post<FileAccessor>(`/accessor/${shareId}/${path}`));
       if (!response.success) return response as ICommandResult<string>;
 
       return CommandResult.Ok(this.server.getUri({ url: `/direct/${shareId}/${response.result!.accessor}` }));
@@ -131,8 +128,8 @@ export class ShareConnector extends ServerConnector implements IShareConnector {
       const response = CommandResult.FromResponse(await this.server.get(`/stat/${shareId}/${path}`));
       if (!response.success) return response as ICommandResult<ExtendedStat>;
 
-      response.result.modifiers.createdBy.user.profilePicture = `${Server.url}${response.result.modifiers.createdBy.user.profilePicture}`;
-      response.result.modifiers.lastWrite.user.profilePicture = `${Server.url}${response.result.modifiers.lastWrite.user.profilePicture}`;
+      response.result.modifiers.createdBy.user.profilePicture = `${Server.url}${response.result.modifiers.createdBy.user.profilePicture}${authcode()}`;
+      response.result.modifiers.lastWrite.user.profilePicture = `${Server.url}${response.result.modifiers.lastWrite.user.profilePicture}${authcode()}`;
 
       return response;
     } catch (e) {

@@ -2,7 +2,7 @@ import { DummyFileProgress, type FileProgressMutator, type FsProgressOperation }
 import type { LoadSaveDialogData } from "$apps/user/filemanager/types";
 import type { IFilesystemUserContext } from "$interfaces/contexts/IFilesystemUserContext";
 import type { ILegacyServerDrive } from "$interfaces/drives/ILegacyServerDrive";
-import type { IMemoryFilesystemDrive } from "$interfaces/drives/IMemoryFilesystemDrive";
+import type { ITemporaryFilesystemDrive } from "$interfaces/drives/ITemporaryFilesystemDrive";
 import type { ICommandResult } from "$interfaces/ICommandResult";
 import type { IFilesystemDrive } from "$interfaces/IFilesystemDrive";
 import type { IUserDaemon } from "$interfaces/IUserDaemon";
@@ -30,7 +30,7 @@ import { UserContext } from "../context";
 
 export class FilesystemUserContext extends UserContext implements IFilesystemUserContext {
   private thumbnailCache: Record<string, string> = {};
-  public TempFs?: IMemoryFilesystemDrive;
+  public TempFs?: ITemporaryFilesystemDrive;
   public fileHandlers: Record<string, FileHandler>;
   public mountedDrives: string[] = [];
   private TempFsSnapshot: Record<string, any> = {};
@@ -46,7 +46,7 @@ export class FilesystemUserContext extends UserContext implements IFilesystemUse
   }
 
   async _init() {
-    this.TempFs = Fs.getDriveById("temp") as IMemoryFilesystemDrive;
+    this.TempFs = Fs.getDriveById("temp") as ITemporaryFilesystemDrive;
     this.TempFsSnapshot = await this.TempFs.takeSnapshot();
   }
 
@@ -66,7 +66,7 @@ export class FilesystemUserContext extends UserContext implements IFilesystemUse
     const elevated =
       fromSystem ||
       (await Daemon!.elevation?.manuallyElevate({
-        what: "ArcOS needs your permission to mount a ZIP file",
+        what: "Sacruda needs your permission to mount a ZIP file",
         title: getItemNameFromPath(path),
         description: letter ? `As ${letter}:/` : "As a drive",
         image: "DriveIcon",
@@ -445,7 +445,7 @@ export class FilesystemUserContext extends UserContext implements IFilesystemUse
       await MessageBox(
         {
           title: `Unknown file type`,
-          message: `ArcOS doesn't have an app that can open '${filename}'. Click <b>Open With</b> to pick from a list of applications.`,
+          message: `Sacruda doesn't have an app that can open '${filename}'. Click <b>Open With</b> to pick from a list of applications.`,
           buttons: [
             {
               caption: "Open With",
@@ -467,9 +467,23 @@ export class FilesystemUserContext extends UserContext implements IFilesystemUse
 
     this.RecentFiles?.addToRecents(path);
 
-    if (result.handledBy.handler) return await result.handledBy.handler.handle(path);
+    try {
+      if (result.handledBy.handler) return await result.handledBy.handler.handle(path);
 
-    return await Daemon!.spawn?.spawnApp(result.handledBy.app?.id!, +Env.get("shell_pid"), {}, path);
+      return await Daemon!.spawn?.spawnApp(result.handledBy.app?.id!, +Env.get("shell_pid"), {}, path);
+    } catch (e) {
+      MessageBox(
+        {
+          title: "An error occurred",
+          message: `The file could not be opened. ${e}`,
+          buttons: [BTN_OKAY_SUG],
+          sound: "arcos.dialog.error",
+          image: "ErrorIcon",
+        },
+        this.shell?.pid ?? this.pid,
+        true
+      );
+    }
   }
 
   async openWith(path: string) {
@@ -592,12 +606,13 @@ export class FilesystemUserContext extends UserContext implements IFilesystemUse
             {
               caption: "Delete permanently",
               action: () => r("incinerate"),
-              hide: () => !isUserFs,
+              suggested: !isUserFs,
             },
             {
               caption: "Recycle",
               action: () => r("recycle"),
               suggested: true,
+              hide: () => !isUserFs,
             },
           ],
         },
@@ -705,7 +720,7 @@ export class FilesystemUserContext extends UserContext implements IFilesystemUse
     MessageBox(
       {
         title: `${name}`,
-        message: `This folder is required for ArcOS to run properly. If it or any of its files are missing, ArcOS might crash or become unstable. You cannot delete this item.<br><br><details><summary>Show path</summary><code class='block'>${path}</code></details>`,
+        message: `This folder is required for Sacruda to run properly. If it or any of its files are missing, Sacruda might crash or become unstable. You cannot delete this item.<br><br><details><summary>Show path</summary><code class='block'>${path}</code></details>`,
         buttons: [{ caption: "Okay", action: () => {}, suggested: true }],
         sound: "arcos.dialog.warning",
         image: "InfoIcon",

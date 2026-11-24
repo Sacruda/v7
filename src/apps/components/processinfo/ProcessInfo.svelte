@@ -7,6 +7,7 @@
   import Segment from "$lib/InfoBlock/InfoRow/Segment.svelte";
   import ActionBar from "$lib/Window/ActionBar.svelte";
   import ActionButton from "$lib/Window/ActionBar/ActionButton.svelte";
+  import ActionIconButton from "$lib/Window/ActionBar/ActionIconButton.svelte";
   import { Daemon, Env, Stack } from "$ts/env";
   import { ProcessesHelper } from "$ts/helpers/processes";
   import { Sleep } from "$ts/sleep";
@@ -59,6 +60,9 @@
     <InfoRow>
       <Segment title="Source Path">{proc.sourceUrl || import.meta.url}</Segment>
       <Segment title="Source Type">{proc.sourceUrl ? "Original" : "Interpreted"}</Segment>
+      {#if !ProcessesHelper.IsAnyAppProcess(proc)}
+        <Segment title="Class" alt={proc.constructor.name || "-"}>{proc.constructor.name || "-"}</Segment>
+      {/if}
     </InfoRow>
   </InfoBlock>
   {#if ProcessesHelper.IsAnyAppProcess(proc)}
@@ -66,13 +70,14 @@
       <InfoRow>
         <Segment title="App ID" alt={proc.app.id}>{proc.app.id}</Segment>
         <Segment title="Origin" alt={proc.app.data.originId}>{proc.app.data.originId}</Segment>
-        <Segment title="Desktop" alt={proc.app.desktop}>{proc.app.desktop || "-"}</Segment>
+        <Segment title="Class" alt={proc.constructor.name || "-"}>{proc.constructor.name || "-"}</Segment>
       </InfoRow>
     </InfoBlock>
   {/if}
   <ActionBar floating>
     {#snippet leftContent()}
-      <ActionButton className="kill" onclick={() => process.kill(proc)}>Kill</ActionButton>
+      <ActionIconButton className="kill" onclick={() => process.kill(proc)} icon="power" title="Kill process" />
+      <ActionIconButton onclick={() => process.peek(proc)} icon="bug" title="Peek process" />
     {/snippet}
     {#snippet rightContent()}
       {#if proc.sourceUrl && proc.sourceUrl !== "undetermined"}

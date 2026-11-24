@@ -1,7 +1,6 @@
 import type { IArcTerminal } from "$interfaces/IArcTerminal";
-import type { IServerManager } from "$interfaces/modules/IServerManager";
 import type { IAdminBootstrapper } from "$interfaces/services/IAdminBootstrapper";
-import { getKMod } from "$ts/env";
+import { Server } from "$ts/env";
 import { getAllJsonPaths, getJsonHierarchy } from "$ts/util/hierarchy";
 import { tryJsonParse } from "$ts/util/json";
 import { ElevationLevel } from "$types/system/elevation";
@@ -28,7 +27,7 @@ export class AdminCommand extends TerminalProcess {
 
   protected async main(term: IArcTerminal): Promise<number> {
     const elevated = await term.elevate({
-      what: "ArcTerm wants to open the Administrator Console",
+      what: "Terminal wants to open the Administrator Console",
       title: "Administrator Console",
       description: "Izaak Kuipers",
       image: "ElevationIcon",
@@ -39,10 +38,11 @@ export class AdminCommand extends TerminalProcess {
 
     const paths = getAllJsonPaths(AdminCommandStore).map((a) => a.replaceAll(".", " "));
     const admin = term.daemon?.serviceHost?.getService<IAdminBootstrapper>("AdminBootstrapper");
-    const server = getKMod<IServerManager>("server");
 
     term.term.clear();
-    this.rl?.println(`ArcOS Administrator Console version 1.0.0\r\n\r\n© 2025 Izaak Z. Kuipers\r\nOn server: ${server.url}\r\n`);
+    this.rl?.println(
+      `Sacruda Administrator Console version 1.0.0\r\n\r\n© 2025 Izaak Z. Kuipers\r\nOn server: ${Server.url}\r\n`
+    );
 
     if (!admin) {
       term.Error("Access is denied.");

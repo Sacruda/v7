@@ -1,12 +1,16 @@
-// !tpa
-export interface AppKeyCombination {
+import type { MaybePromise } from "$types/shared/common";
+
+// !tp
+
+export interface AppKeyboardCombination {
   alt?: boolean;
   ctrl?: boolean;
   shift?: boolean;
   key?: string;
-  action(proc: any, event: KeyboardEvent): void;
+  action(proc: any, event: KeyboardEvent): MaybePromise<any>;
   global?: boolean;
 }
 
-export type AppKeyCombinations = AppKeyCombination[];
+export type AppKeyboardCombinations = AppKeyboardCombination[];
+
 // !endtpa

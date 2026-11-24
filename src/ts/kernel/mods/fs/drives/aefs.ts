@@ -1,14 +1,14 @@
 import type { IFilesystemDrive } from "$interfaces/IFilesystemDrive";
-import { Daemon } from "$ts/env";
+import { Daemon, Server } from "$ts/env";
 import { FilesystemDrive } from "$ts/kernel/mods/fs/drives/generic";
 import { Backend } from "$ts/kernel/mods/server/axios";
 import { authcode, ToAxiosProgress } from "$ts/util";
 import type {
   DirectoryReadReturn,
   DriveCapabilities,
+  FileAccessor,
   FilesystemProgressCallback,
   FilesystemStat,
-  FsAccess,
   RecursiveDirectoryReadReturn,
   UserQuota,
 } from "$types/system/fs";
@@ -141,9 +141,9 @@ export class AdminServerDrive extends FilesystemDrive implements IFilesystemDriv
         { headers: { Authorization: `Bearer ${Daemon!.token}` } }
       );
 
-      const data = response.data as FsAccess;
+      const data = response.data as FileAccessor;
 
-      return `${this.server.url}/fs/direct/${data.userId}/${data.accessor}${authcode()}`;
+      return `${Server.url}/fs/direct/${data.userId}/${data.accessor}${authcode()}`;
     } catch {
       return undefined;
     }

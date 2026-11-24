@@ -2,14 +2,14 @@ import type { IAppProcess } from "$interfaces/IAppProcess";
 import type { IContextMenuRuntime } from "$interfaces/runtimes/IContextMenuRuntime";
 import { Env, Stack } from "$ts/env";
 import { UUID } from "$ts/util/uuid";
-import type { ContextMenuItem } from "$types/apps/app";
+import type { ContextMenuItem } from "$types/apps";
 
 export function contextProps(node: HTMLElement, args: any[]) {
   const contextMenuPid = Env?.get("contextmenu_pid");
-  if (!contextMenuPid) return;
+  if (!contextMenuPid) throw new Error("contextProps invoked before ContextMenuRuntime construction");
 
   const contextmenu = Stack?.getProcess<IContextMenuRuntime>(+contextMenuPid);
-  if (!contextmenu) return;
+  if (!contextmenu) throw new Error("contextProps invoked before ContextMenuRuntime construction");
 
   const uuid = UUID();
 

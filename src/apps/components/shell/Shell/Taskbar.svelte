@@ -2,13 +2,13 @@
   import type { IShellRuntime } from "$interfaces/runtimes/IShellRuntime";
   import type { ITrayHostService } from "$interfaces/services/ITrayHostService";
   import ServiceGate from "$lib/ServiceGate.svelte";
-  import { contextMenu } from "$ts/ui/context/actions.svelte";
   import ActionCenterButton from "./Taskbar/ActionCenterButton.svelte";
   import OpenedApps from "./Taskbar/OpenedApps.svelte";
   import PinnedApps from "./Taskbar/PinnedApps.svelte";
   import StartButton from "./Taskbar/StartButton.svelte";
   import Clock from "./Taskbar/SystemArea/Clock.svelte";
   import SystemTray from "./Taskbar/SystemTray.svelte";
+  import TaskbarWeatherApplet from "./Taskbar/TaskbarWeatherApplet.svelte";
   import WorkspaceManagerButton from "./Taskbar/WorkspaceManagerButton.svelte";
 
   const { process }: { process: IShellRuntime } = $props();
@@ -26,6 +26,7 @@
   <PinnedApps {process} />
   <OpenedApps {process} />
 
+  <TaskbarWeatherApplet {process} />
   <ServiceGate id="TrayHostSvc">
     {#snippet ifActive(service: ITrayHostService)}
       <SystemTray {process} {service} />

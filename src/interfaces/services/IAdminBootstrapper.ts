@@ -1,3 +1,4 @@
+import type { Constructs } from "$interfaces/common";
 import type { ICommandResult } from "$interfaces/ICommandResult";
 import type { IFilesystemDrive } from "$interfaces/IFilesystemDrive";
 import type { IBaseService } from "$interfaces/IServiceHost";
@@ -6,8 +7,11 @@ import type {
   AdminTemporaryPassword,
   AuditLog,
   AuditLogQueryOptions,
+  BugHuntGetResponse,
   BugReportSourceInformation,
-  FSItem,
+  DbQuery,
+  DbQueryCollectionColumn,
+  FilesystemIndexingItem,
   IpAddress,
   PartialUserTotp,
   ServerLogItem,
@@ -17,14 +21,19 @@ import type {
   UserTotp,
 } from "$types/server/admin";
 import type { BugReport, ReportStatistics } from "$types/server/bughunt";
+import type { Mailbroker } from "$types/server/mailbroker";
 import type { QueryResult } from "$types/server/query";
 import type { SharedDriveType } from "$types/server/shares";
 import type { BetaFeedback } from "$types/system/beta";
-import type { FilesystemProgressCallback, FsAccess, UserQuota } from "$types/system/fs";
+import type { GlobalDispatchProcessSummary } from "$types/system/dispatch";
+import type { FileAccessor, FilesystemProgressCallback, UserQuota } from "$types/system/fs";
 import type { StoreItem } from "$types/tpa/package";
 import type { ExpandedUserInfo, UserInfo, UserPreferences } from "$types/user";
+import type { AxiosInstance } from "axios";
 
 export interface IAdminBootstrapper extends IBaseService {
+  Jobs: IAdminBootstrapperJobConstructor[];
+  get adminClient(): AxiosInstance;
   start(): Promise<void>;
   getUserInfo(): Promise<UserInfo | undefined>;
   mountUserDrive(
@@ -53,7 +62,7 @@ export interface IAdminBootstrapper extends IBaseService {
   closeBugReport(reportId: string): Promise<boolean>;
   reopenBugReport(reportId: string): Promise<boolean>;
   getAllBugReports(): Promise<BugReport[]>;
-  getBugReport(id: string): Promise<BugReport | undefined>;
+  getBugReport(id: string): Promise<BugHuntGetResponse | undefined>;
   getBugHuntStatistics(): Promise<ReportStatistics | undefined>;
   setSystemFor(username: string, value: boolean): Promise<boolean>;
   disapproveUser(username: string): Promise<boolean>;
@@ -72,12 +81,12 @@ export interface IAdminBootstrapper extends IBaseService {
   getTotpOf(username: string): Promise<UserTotp | undefined>;
   deActivateTotpOf(username: string): Promise<boolean>;
   deleteTotpOf(username: string): Promise<boolean>;
-  getAllFsAccessors(): Promise<FsAccess[]>;
-  getFsAccessorsOf(username: string): Promise<FsAccess[]>;
+  getAllFsAccessors(): Promise<FileAccessor[]>;
+  getFsAccessorsOf(username: string): Promise<FileAccessor[]>;
   deleteAllFsAccessors(): Promise<boolean>;
   deleteFsAccessorsOf(username: string): Promise<boolean>;
-  getAllIndexingNodes(): Promise<FSItem[]>;
-  getIndexingNodesOf(username: string): Promise<FSItem[]>;
+  getAllIndexingNodes(): Promise<FilesystemIndexingItem[]>;
+  getIndexingNodesOf(username: string): Promise<FilesystemIndexingItem[]>;
   forceIndexFor(username: string): Promise<string[]>;
   deleteIndexingOf(username: string): Promise<boolean>;
   canAccess(...scopes: string[]): boolean;
@@ -88,7 +97,7 @@ export interface IAdminBootstrapper extends IBaseService {
   deleteShare(shareId: string): Promise<boolean>;
   kickUserFromShare(shareId: string, userId: string): Promise<boolean>;
   addUserToShare(shareId: string, userId: string): Promise<boolean>;
-  getShareAccessors(shareId: string): Promise<FSItem[]>;
+  getShareAccessors(shareId: string): Promise<FilesystemIndexingItem[]>;
   deleteShareAccessors(shareId: string): Promise<boolean>;
   changeSharePassword(shareId: string, newPassword: string): Promise<boolean>;
   renameShare(shareId: string, newName: string): Promise<boolean>;
@@ -125,4 +134,47 @@ export interface IAdminBootstrapper extends IBaseService {
   getBetaFeedbackFor(version: string): Promise<ICommandResult<BetaFeedback[]>>;
   markBetaFeedbackAsRead(id: string): Promise<ICommandResult>;
   createTemporaryLogin(userId: string): Promise<ICommandResult<AdminTemporaryPassword>>;
+  getMailbrokerKey(id: string): Promise<ICommandResult<Mailbroker.MailKey>>;
+  getAllMailbrokerKeys(): Promise<ICommandResult<Mailbroker.MailKey[]>>;
+  getMailbrokerLogs(): Promise<ICommandResult<Mailbroker.MailLog[]>>;
+  getMailbrokerTemplate(id: string): Promise<ICommandResult<Mailbroker.MailTemplate>>;
+  getMailbrokerTemplates(
+    filter?: (template: Mailbroker.MailTemplate) => boolean
+  ): Promise<ICommandResult<Mailbroker.MailTemplate[]>>;
+  getMailbrokerSentRecord(id: string): Promise<ICommandResult<Mailbroker.SentMail>>;
+  getMailbrokerSentRecords(): Promise<ICommandResult<Mailbroker.SentMail[]>>;
+  deleteMailbrokerKey(id: string): Promise<ICommandResult>;
+  disableMailbrokerKey(id: string): Promise<ICommandResult>;
+  enableMailbrokerKey(id: string): Promise<ICommandResult>;
+  createMailbrokerKey(serverName: string): Promise<ICommandResult<Mailbroker.MailKey>>;
+  sendMailTemplateById(id: string, userId: string, props: Record<string, string>): Promise<ICommandResult<Mailbroker.SentMail>>;
+  sendMailTemplateByName(
+    name: string,
+    userId: string,
+    props: Record<string, string>
+  ): Promise<ICommandResult<Mailbroker.SentMail>>;
+  deleteMailbrokerSentRecord(id: string): Promise<ICommandResult>;
+  deprecateMailbrokerTemplate(id: string): Promise<ICommandResult>;
+  undeprecateMailbrokerTemplate(id: string): Promise<ICommandResult>;
+  deleteMailbrokerTemplate(id: string): Promise<ICommandResult>;
+  updateMailbrokerTemplate(id: string, update: Mailbroker.MailTemplateUpdate): Promise<ICommandResult>;
+  createMailbrokerTemplate(data: Mailbroker.MailTemplateCreate): Promise<ICommandResult>;
+  RunJob(jobName: string, broadcast: (message: string) => void): Promise<ICommandResult>;
+  DbQueryCollections(): Promise<ICommandResult<string[]>>;
+  DbQueryColumns(collection: string): Promise<ICommandResult<DbQueryCollectionColumn[]>>;
+  DbQueryExecute<T = any>(query: DbQuery): Promise<ICommandResult<T[]>>;
+  getDispatchProcessesSummary(): Promise<ICommandResult<GlobalDispatchProcessSummary>>;
+  KickDispatchClient(id: string): Promise<ICommandResult>;
+}
+
+export interface IAdminBootstrapperJob {
+  RequiredScopes: string[];
+  jobName: string;
+  get bootstrapper(): IAdminBootstrapper;
+  _run(broadcast?: (message: string) => void): Promise<ICommandResult>;
+  run(broadcast?: (message: string) => void): Promise<ICommandResult>;
+}
+
+export interface IAdminBootstrapperJobConstructor extends Constructs<IAdminBootstrapperJob> {
+  name: string;
 }

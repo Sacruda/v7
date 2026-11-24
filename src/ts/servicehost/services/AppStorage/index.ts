@@ -2,9 +2,9 @@ import type { Constructs } from "$interfaces/common";
 import type { ICommandResult } from "$interfaces/ICommandResult";
 import type { IServiceHost } from "$interfaces/IServiceHost";
 import type { IThirdPartyAppProcess } from "$interfaces/IThirdPartyAppProcess";
-import type { IApplicationStorage } from "$interfaces/services/IApplicationStorage";
+import type { AppStorage, AppStoreCb, IApplicationStorage } from "$interfaces/services/IApplicationStorage";
 import { BuiltinAppImportPathAbsolutes } from "$ts/apps/store";
-import { ArcOSVersion, Daemon, Env, Fs, State, SysDispatch } from "$ts/env";
+import { Daemon, Env, Fs, SacrudaVersion, State, SysDispatch } from "$ts/env";
 import { ArcBuild } from "$ts/metadata/build";
 import { ArcMode } from "$ts/metadata/mode";
 import { CommandResult } from "$ts/result";
@@ -17,7 +17,8 @@ import { join } from "$ts/util/fs";
 import { validateObject } from "$ts/util/json";
 import { compareVersion } from "$ts/util/version";
 import { Store } from "$ts/writable";
-import type { App, AppStorage, AppStoreCb, InstalledApp } from "$types/apps/app";
+import type { InstalledApp } from "$types/apps";
+import type { App } from "$types/apps/app";
 import type { Service } from "$types/services/service";
 
 export class ApplicationStorage extends BaseService implements IApplicationStorage {
@@ -61,7 +62,7 @@ export class ApplicationStorage extends BaseService implements IApplicationStora
       MessageBox(
         {
           title: "App load error",
-          message: `ArcOS failed to load a first-party application because of an error. ${result.errorMessage ?? "Unknown error"}.`,
+          message: `Sacruda failed to load a first-party application because of an error. ${result.errorMessage ?? "Unknown error"}.`,
           buttons: [{ caption: "Okay", action: () => r(), suggested: true }],
           image: "WarningIcon",
         },
@@ -146,8 +147,8 @@ export class ApplicationStorage extends BaseService implements IApplicationStora
 
       if (app.loadCondition && !(await app.loadCondition(Daemon))) return CommandResult.Error(`LOAD_CONDITION`);
 
-      if (app._internalMinVer && compareVersion(ArcOSVersion, app._internalMinVer) === "higher") {
-        return CommandResult.Error(`This application expects a newer version of ArcOS`);
+      if (app._internalMinVer && compareVersion(SacrudaVersion, app._internalMinVer) === "higher") {
+        return CommandResult.Error(`This application expects a newer version of Sacruda`);
       }
 
       if (app._internalSysVer || app._internalOriginalPath) {
@@ -157,7 +158,7 @@ export class ApplicationStorage extends BaseService implements IApplicationStora
       const end = performance.now() - start;
       const appCopy = cloneAppMeta(app);
 
-      appCopy._internalSysVer = `v${ArcOSVersion}-${ArcMode()}_${ArcBuild()}`;
+      appCopy._internalSysVer = `v${SacrudaVersion}-${ArcMode()}_${ArcBuild()}`;
       appCopy._internalOriginalPath = path;
       appCopy._internalLoadTime = end;
       if (originalPath) appCopy._internalResolvedPath = originalPath;
