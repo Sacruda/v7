@@ -19,7 +19,6 @@ import Services from "./ProcessManager/Page/Services.svelte";
 export class ProcessManagerRuntime extends AppProcess implements IProcessManagerRuntime {
   public selected = Store<string>();
   public running = Store<number>(0);
-  public currentTab = Store<string>("Processes");
   public tabs: Record<string, Component> = {
     Processes: Processes as any,
     Services: Services as any,
@@ -36,14 +35,12 @@ export class ProcessManagerRuntime extends AppProcess implements IProcessManager
 
     this.setSource(__SOURCE__);
     this.host = Daemon?.serviceHost!;
-    if (page && this.tabs[page]) this.currentTab.set(page);
   }
 
   async render() {
     const existingInstance = await this.closeIfSecondInstance();
 
     if (existingInstance) {
-      existingInstance.currentTab.set(this.currentTab());
       return false;
     }
   }
@@ -54,7 +51,6 @@ export class ProcessManagerRuntime extends AppProcess implements IProcessManager
     this.Log(`kill: ${proc.pid}`);
 
     const name = ProcessesHelper.IsAnyAppProcess(proc) ? proc.app.data.metadata.name : proc.name;
-
     const elevated = await Daemon!.elevation!.manuallyElevate({
       what: `Sacruda needs your permission to kill a process`,
       image: ProcessesHelper.IsAnyAppProcess(proc) ? proc.windowIcon() || "ComponentIcon" : "DefaultIcon",
@@ -116,6 +112,7 @@ export class ProcessManagerRuntime extends AppProcess implements IProcessManager
     this.Log(`stopService: ${id}`);
 
     if (!this.host.getService(id)) return;
+
     MessageBox(
       {
         title: "Stop service?",

@@ -1,35 +1,33 @@
 <script lang="ts">
-  import ProcessRows from "./ProcessRows.svelte";
-  import Icon from "$lib/Icon.svelte";
   import type { SummarizedProcessInformation } from "$types/system/dispatch";
-  import { ProcessStateIcons } from "$types/system/process";
+  import ProcessRow from "./ProcessRow.svelte";
 
-  const {
+  let {
     parentPid = undefined,
     processes,
     indent,
-  }: { parentPid?: number; processes: SummarizedProcessInformation[]; indent: number } = $props();
+    userId,
+    clientId,
+  }: {
+    parentPid?: number;
+    processes: SummarizedProcessInformation[];
+    indent: number;
+    userId: string;
+    clientId: string;
+  } = $props();
 
-  let filtered = $derived(processes.filter((proc) => (!parentPid ? !proc.parentPid : proc.parentPid === parentPid)));
+  let filtered = $derived(
+    processes.filter((proc) => (parentPid === undefined ? !proc.parentPid : proc.parentPid === parentPid))
+  );
 </script>
 
-{#each filtered as process (process.pid)}
-  <tr class="row" style="--indent: {indent};">
-    <td class="name">
-      <div>
-        <Icon icon={process.appId ? `@app::${process.appId}` : "DefaultIcon"} />
-        <span>{process.name}</span>
-        <span class="lucide icon-{ProcessStateIcons[process.state]}"></span>
-      </div>
-    </td>
-    <td class="pid">
-      <div>
-        <Icon icon="FlagIcon" className="flag" />
-        <span>{process.pid}</span>
-      </div>
-    </td>
-    <td class="memory">-</td>
-    <td class="app-id" title={process.appId}>{process.appId || "-"}</td>
-  </tr>
-  <ProcessRows {processes} parentPid={process.pid} indent={indent + 1} />
+{#each filtered as proc (proc.pid)}
+  <ProcessRow
+    {proc}
+    {processes}
+    {indent}
+    key={`all__user:${userId}_client:${clientId}_process:${proc.pid}`}
+    {clientId}
+    {userId}
+  />
 {/each}

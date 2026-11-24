@@ -137,6 +137,11 @@
       padding: 0 8px;
     }
 
+    td:first-child:last-child,
+    th:first-child:last-child {
+      border-radius: 6px;
+    }
+
     td:first-child {
       padding-left: calc(8px + calc(var(--indent, 0) * 25px));
     }

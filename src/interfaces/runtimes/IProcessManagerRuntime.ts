@@ -10,7 +10,6 @@ import type { Component } from "svelte";
 export interface IProcessManagerRuntime extends IAppProcess {
   selected: ReadableStore<string>;
   running: ReadableStore<number>;
-  currentTab: ReadableStore<string>;
   tabs: Record<string, Component>;
   host: IServiceHost;
   get adminBootstrapper(): IAdminBootstrapper;
