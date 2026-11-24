@@ -27,10 +27,16 @@
   }
 </script>
 
-<div class="process-tree">
+<table class="process-tree">
+  <colgroup>
+    <col width="59%" />
+    <col width="1%" />
+    <col width="20%" />
+    <col width="20%" />
+  </colgroup>
   {#if summary}
     {#each Object.keys(summary) as userId (userId)}
-      <UserRow {userId} clients={summary[userId]} user={users.find((u) => u._id === userId)!} />
+      <UserRow clients={summary[userId]} user={users.find((u) => u._id === userId)!} />
     {/each}
   {/if}
-</div>
+</table>
