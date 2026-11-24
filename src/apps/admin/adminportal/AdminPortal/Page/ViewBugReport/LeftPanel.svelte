@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { BugReportTpaFile } from "$apps/admin/adminportal/types";
   import type { IAdminPortalRuntime } from "$interfaces/runtimes/IAdminPortalRuntime";
+  import Icon from "$lib/Icon.svelte";
   import { Daemon } from "$ts/env";
   import { formatBytes } from "$ts/util/fs";
   import type { BugReport } from "$types/server/bughunt";
@@ -10,7 +11,6 @@
   import Provided from "./LeftPanel/Provided.svelte";
   import Server from "./LeftPanel/Server.svelte";
   import UserAgent from "./LeftPanel/UserAgent.svelte";
-  import Icon from "$lib/Icon.svelte";
 
   const { report, process }: { report: BugReport; process: IAdminPortalRuntime } = $props();
 

@@ -4,7 +4,7 @@ import { ConfigurationBuilder } from "$ts/config";
 import { Daemon, Fs, SysDispatch } from "$ts/env";
 import { UserPaths } from "$ts/user/store";
 import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
-import { getItemNameFromPath, join } from "$ts/util/fs";
+import { join } from "$ts/util/fs";
 import { Store } from "$ts/writable";
 import type { AppContextMenu, AppProcessData } from "$types/apps/app";
 import { LogLevel } from "$types/shared/logging";

@@ -1,4 +1,4 @@
-import type { DbQueryCollectionColumn, DbQueryOrderBy, DbQueryWhere } from "$types/server/admin";
+import type { DbQueryOrderBy, DbQueryWhere } from "$types/server/admin";
 
 export type NewExecuteQueryWhereClauses = Record<string, DbQueryWhere[]>;
 

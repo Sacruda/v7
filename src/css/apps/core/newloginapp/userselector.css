@@ -7,7 +7,7 @@
   max-height: 360px; /* room for 4 users + add user */
   overflow-y: auto;
   scrollbar-width: none;
-  
+
   &::-webkit-scrollbar {
     display: none;
   }

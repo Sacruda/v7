@@ -41,9 +41,8 @@
   filter: blur(40px);
 
   .theme-light & {
-    opacity: .2;
+    opacity: 0.2;
   }
-
 }
 
 #systemSettings div.container.account div.centered-layout {
@@ -87,7 +86,7 @@
   overflow: hidden;
 }
 
-#systemSettings div.change-menu div.inner>span {
+#systemSettings div.change-menu div.inner > span {
   width: 30px;
   height: 30px;
   line-height: 30px;
@@ -131,7 +130,7 @@
   background-color: transparent;
 }
 
-#systemSettings div.container.account div.header h1.account-name>span {
+#systemSettings div.container.account div.header h1.account-name > span {
   border-bottom: transparent 1px solid;
 }
 

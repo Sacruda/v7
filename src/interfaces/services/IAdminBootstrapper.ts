@@ -25,6 +25,7 @@ import type { Mailbroker } from "$types/server/mailbroker";
 import type { QueryResult } from "$types/server/query";
 import type { SharedDriveType } from "$types/server/shares";
 import type { BetaFeedback } from "$types/system/beta";
+import type { GlobalDispatchProcessSummary } from "$types/system/dispatch";
 import type { FilesystemProgressCallback, FsAccess, UserQuota } from "$types/system/fs";
 import type { StoreItem } from "$types/tpa/package";
 import type { ExpandedUserInfo, UserInfo, UserPreferences } from "$types/user";
@@ -162,6 +163,8 @@ export interface IAdminBootstrapper extends IBaseService {
   DbQueryCollections(): Promise<ICommandResult<string[]>>;
   DbQueryColumns(collection: string): Promise<ICommandResult<DbQueryCollectionColumn[]>>;
   DbQueryExecute<T = any>(query: DbQuery): Promise<ICommandResult<T[]>>;
+  getDispatchProcessesSummary(): Promise<ICommandResult<GlobalDispatchProcessSummary>>;
+  KickDispatchClient(id: string): Promise<ICommandResult>;
 }
 
 export interface IAdminBootstrapperJob {

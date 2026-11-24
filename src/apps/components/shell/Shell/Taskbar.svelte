@@ -2,7 +2,6 @@
   import type { IShellRuntime } from "$interfaces/runtimes/IShellRuntime";
   import type { ITrayHostService } from "$interfaces/services/ITrayHostService";
   import ServiceGate from "$lib/ServiceGate.svelte";
-  import { contextMenu } from "$ts/ui/context/actions.svelte";
   import ActionCenterButton from "./Taskbar/ActionCenterButton.svelte";
   import OpenedApps from "./Taskbar/OpenedApps.svelte";
   import PinnedApps from "./Taskbar/PinnedApps.svelte";

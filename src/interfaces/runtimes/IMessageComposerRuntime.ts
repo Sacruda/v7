@@ -12,7 +12,7 @@ export interface IMessageComposerRuntime extends IAppProcess {
   body: ReadableStore<string>;
   replyId: string | undefined;
   service: IMessagingInterface;
-  showPreview: BooleanStore
+  showPreview: BooleanStore;
   send(): Promise<void>;
   discard(): Promise<boolean | void>;
   sendFailed(): void;

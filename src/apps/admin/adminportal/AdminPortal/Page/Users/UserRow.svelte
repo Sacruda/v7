@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { IAdminPortalRuntime } from "$interfaces/runtimes/IAdminPortalRuntime";
-  import ProfilePicture from "$lib/ProfilePicture.svelte";
   import type { ReadableStore } from "$types/shared/writable";
   import type { ExpandedUserInfo } from "$types/user";
   import dayjs from "dayjs";

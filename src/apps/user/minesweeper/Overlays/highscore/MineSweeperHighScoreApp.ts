@@ -10,7 +10,7 @@ export const MinesweeperHighScoreApp: App = {
     author: "Izaak Kuipers",
   },
   position: { centered: true },
-  size: { w: 340, h: 200 }, 
+  size: { w: 340, h: 200 },
   minSize: { w: 340, h: 200 },
   maxSize: { w: 340, h: 200 },
   state: {

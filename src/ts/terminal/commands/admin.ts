@@ -40,7 +40,9 @@ export class AdminCommand extends TerminalProcess {
     const admin = term.daemon?.serviceHost?.getService<IAdminBootstrapper>("AdminBootstrapper");
 
     term.term.clear();
-    this.rl?.println(`Sacruda Administrator Console version 1.0.0\r\n\r\n© 2025 Izaak Z. Kuipers\r\nOn server: ${Server.url}\r\n`);
+    this.rl?.println(
+      `Sacruda Administrator Console version 1.0.0\r\n\r\n© 2025 Izaak Z. Kuipers\r\nOn server: ${Server.url}\r\n`
+    );
 
     if (!admin) {
       term.Error("Access is denied.");

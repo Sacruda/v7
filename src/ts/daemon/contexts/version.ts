@@ -2,7 +2,7 @@ import type { IVersionUserContext } from "$interfaces/contexts/IVersionUserConte
 import type { IFilesystemDrive } from "$interfaces/IFilesystemDrive";
 import type { IUserDaemon } from "$interfaces/IUserDaemon";
 import SourceDriveEnable from "$lib/Daemon/SourceDriveEnable.svelte";
-import { SacrudaVersion, Daemon, Env, Fs, Kernel } from "$ts/env";
+import { Daemon, Env, Fs, Kernel, SacrudaVersion } from "$ts/env";
 import { SourceFilesystemDrive } from "$ts/kernel/mods/fs/drives/src";
 import { UserPaths } from "$ts/user/store";
 import { arrayBufferToText, textToBlob } from "$ts/util/convert";

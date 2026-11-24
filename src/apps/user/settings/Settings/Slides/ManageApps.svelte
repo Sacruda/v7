@@ -6,11 +6,11 @@
   import type { App, AppStorage } from "$types/apps/app";
   import Fuse, { type IFuseOptions } from "fuse.js";
   import { onMount } from "svelte";
-  import ViewMode from "./ManageApps/ViewMode.svelte";
-  import SearchBar from "./ManageApps/SearchBar.svelte";
   import FIlter from "./ManageApps/FIlter.svelte";
   import GridAppItem from "./ManageApps/GridAppItem.svelte";
   import GridListItem from "./ManageApps/GridListItem.svelte";
+  import SearchBar from "./ManageApps/SearchBar.svelte";
+  import ViewMode from "./ManageApps/ViewMode.svelte";
 
   const { process }: { process: ISettingsRuntime } = $props();
   const { userPreferences } = process;

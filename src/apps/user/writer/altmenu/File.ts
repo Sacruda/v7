@@ -35,10 +35,10 @@ export function FileMenu(runtime: IWriterRuntime): ContextMenuItem {
       },
       { sep: true },
       {
-        caption:"Print",
+        caption: "Print",
         action: () => {
           runtime.print();
-        }
+        },
       },
       { sep: true },
       {

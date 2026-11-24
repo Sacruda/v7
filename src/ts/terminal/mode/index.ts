@@ -3,7 +3,7 @@ import type { IUserDaemon } from "$interfaces/IUserDaemon";
 import type { ITotpConnector } from "$interfaces/modules/server/ITotpConnector";
 import type { IUserConnector } from "$interfaces/modules/server/IUserConnector";
 import { UserDaemon } from "$ts/daemon";
-import { SacrudaVersion, GetConnector, Server, Stack } from "$ts/env";
+import { GetConnector, SacrudaVersion, Server, Stack } from "$ts/env";
 import { Process } from "$ts/kernel/mods/stack/process/instance";
 import { ArcBuild } from "$ts/metadata/build";
 import { ArcMode } from "$ts/metadata/mode";

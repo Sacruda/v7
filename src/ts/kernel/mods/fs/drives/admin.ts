@@ -3,7 +3,6 @@ import { Daemon, Server } from "$ts/env";
 import { FilesystemDrive } from "$ts/kernel/mods/fs/drives/generic";
 import { Backend } from "$ts/kernel/mods/server/axios";
 import { authcode, ToAxiosProgress } from "$ts/util";
-import { arrayBufferToBlob } from "$ts/util/convert";
 import { toForm } from "$ts/util/form";
 import { getItemNameFromPath, join } from "$ts/util/fs";
 import type {

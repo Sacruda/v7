@@ -11,6 +11,6 @@
   <div class="info">
     <h2>Key for {serverKey.serverName}</h2>
     <p class="what">{serverKey.disabled ? "Decommissioned" : "In-use"} server key</p>
-    <ServerKeyPills {serverKey} disabled={serverKey.disabled}/>
+    <ServerKeyPills {serverKey} disabled={serverKey.disabled} />
   </div>
 </button>

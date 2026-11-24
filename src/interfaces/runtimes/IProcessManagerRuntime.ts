@@ -1,7 +1,9 @@
 import type { IAppProcess } from "$interfaces/IAppProcess";
+import type { ICommandResult } from "$interfaces/ICommandResult";
 import type { IProcess } from "$interfaces/IProcess";
 import type { IServiceHost } from "$interfaces/IServiceHost";
-import type { ReadableStore } from "$types/shared/writable";
+import type { IAdminBootstrapper } from "$interfaces/services/IAdminBootstrapper";
+import type { BooleanStore, ReadableStore } from "$types/shared/writable";
 import type { ProcessKillResult } from "$types/system/process";
 import type { Component } from "svelte";
 
@@ -9,9 +11,10 @@ import type { Component } from "svelte";
 export interface IProcessManagerRuntime extends IAppProcess {
   selected: ReadableStore<string>;
   running: ReadableStore<number>;
-  currentTab: ReadableStore<string>;
   tabs: Record<string, Component>;
+  allUsers: BooleanStore;
   host: IServiceHost;
+  get adminBootstrapper(): IAdminBootstrapper;
 
   render(): Promise<false | undefined>;
   kill(proc: IProcess): Promise<void>;
@@ -22,4 +25,5 @@ export interface IProcessManagerRuntime extends IAppProcess {
   serviceInfoFor(id: string): void;
   appInfoFor(proc: IAppProcess): void;
   processInfoFor(proc: IProcess): void;
+  kickDispatchClient(id: string): Promise<ICommandResult>;
 }

@@ -43,8 +43,8 @@
 </script>
 
 <p>
-  Sacruda has a recycle bin which holds files or folders that you've deleted from your drive. This page manages the settings related
-  to recycling.
+  Sacruda has a recycle bin which holds files or folders that you've deleted from your drive. This page manages the settings
+  related to recycling.
 </p>
 
 <section class="enable">

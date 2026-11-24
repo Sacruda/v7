@@ -8,4 +8,5 @@
     $props();
 </script>
 
-<textarea bind:value={$updateData.textContent} readonly={!process.admin.canAccess(AdminScopes.adminMailbrokerTemplatesWrite)}></textarea>
+<textarea bind:value={$updateData.textContent} readonly={!process.admin.canAccess(AdminScopes.adminMailbrokerTemplatesWrite)}
+></textarea>

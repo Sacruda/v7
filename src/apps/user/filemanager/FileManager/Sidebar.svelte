@@ -14,7 +14,11 @@
   <section class="sidebar-section">
     <h1>{process.userPreferences().account.displayName || process.username}</h1>
 
-    <button class="sidebar-button folder" onclick={() => process.navigate(UserPaths.Home)} class:selected={$path === UserPaths.Home}>
+    <button
+      class="sidebar-button folder"
+      onclick={() => process.navigate(UserPaths.Home)}
+      class:selected={$path === UserPaths.Home}
+    >
       <span class="lucide icon-house"></span>
       <span>Home</span>
     </button>

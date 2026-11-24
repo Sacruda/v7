@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { IAdminPortalRuntime } from "$interfaces/runtimes/IAdminPortalRuntime";
-  import ProfilePicture from "$lib/ProfilePicture.svelte";
   import { Daemon } from "$ts/env";
   import { Sleep } from "$ts/sleep";
   import { MessageBox } from "$ts/util/dialog";

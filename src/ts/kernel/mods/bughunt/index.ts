@@ -1,7 +1,7 @@
 import type { IUserDaemon } from "$interfaces/IUserDaemon";
-import type { IWaveKernel, KernelOpModuleName } from "$interfaces/IWaveKernel";
+import type { IWaveKernel } from "$interfaces/IWaveKernel";
 import type { IBugHuntKernelModule } from "$interfaces/modules/IBugHunt";
-import { SacrudaVersion, Env, Kernel, Server, Stack } from "$ts/env";
+import { Env, Kernel, SacrudaVersion, Server, Stack } from "$ts/env";
 import { KernelLogs } from "$ts/kernel/getters";
 import { Backend } from "$ts/kernel/mods/server/axios";
 import { KernelModule } from "$ts/kernel/module";

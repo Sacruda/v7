@@ -96,7 +96,7 @@
 
       div.iframe-wrapper {
         background-color: #fff;
-        border-left:var(--win-border);
+        border-left: var(--win-border);
       }
 
       iframe {

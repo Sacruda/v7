@@ -7,9 +7,9 @@ import type { UserPreferences } from "$types/user";
 import type { Draggable } from "@neodrag/vanilla";
 import type { Constructs } from "./common";
 import type { IProcess } from "./IProcess";
-import type { IApplicationStorage } from "./services/IApplicationStorage";
 import type { ParsedPsaItem } from "./modules/IPsaKernelModule";
 import type { IShellRuntime } from "./runtimes/IShellRuntime";
+import type { IApplicationStorage } from "./services/IApplicationStorage";
 
 // !tpa
 export interface IAppProcess extends IProcess {

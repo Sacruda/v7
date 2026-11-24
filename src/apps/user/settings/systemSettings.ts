@@ -6,7 +6,7 @@ import Settings from "./Settings.svelte";
 export const SystemSettings: App = {
   metadata: {
     name: "System Settings",
-    author: "Izaak Kuipers",  
+    author: "Izaak Kuipers",
     version: "6.0.4",
     icon: "SettingsIcon",
     appGroup: "systemTools",
