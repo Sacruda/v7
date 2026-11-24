@@ -1,9 +1,10 @@
 <script lang="ts">
   import type { ISettingsRuntime } from "$interfaces/runtimes/ISettingsRuntime";
+  import type { AppStorage } from "$interfaces/services/IApplicationStorage";
   import ActionBar from "$lib/Window/ActionBar.svelte";
   import { isPopulatable } from "$ts/util/apps";
   import { Store } from "$ts/writable";
-  import type { App, AppStorage } from "$types/apps/app";
+  import type { App } from "$types/apps";
   import Fuse, { type IFuseOptions } from "fuse.js";
   import { onMount } from "svelte";
   import FIlter from "./ManageApps/FIlter.svelte";

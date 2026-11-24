@@ -1,4 +1,4 @@
-import type { ContextMenuItem } from "$types/apps/app";
+import type { ContextMenuItem } from "$types/apps";
 import { MinesweeperRuntime } from "./runtime";
 import { Difficulties } from "./types";
 

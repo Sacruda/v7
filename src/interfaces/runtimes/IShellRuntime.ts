@@ -1,6 +1,6 @@
 import type { IArcFindService } from "$interfaces/services/IArcFindService";
 import type { ITrayHostService } from "$interfaces/services/ITrayHostService";
-import type { AppContextMenu } from "$types/apps/app";
+import type { AppContextMenu } from "$types/apps";
 import type { ReadableStore } from "$types/shared/writable";
 import type { RecursiveDirectoryReadReturn } from "$types/system/fs";
 import type { IAppProcess } from "../IAppProcess";
