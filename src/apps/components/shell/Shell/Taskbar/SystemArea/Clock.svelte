@@ -26,7 +26,7 @@
 
   onDestroy(() => {
     if (interval) clearInterval(interval);
-  })
+  });
 </script>
 
 <div class="clock">

@@ -26,7 +26,8 @@ export class ChecksUserContext extends UserContext implements IChecksUserContext
     if (window.matchMedia("(prefers-reduced-motion)").matches) {
       Daemon!.notifications?.sendNotification({
         title: "Disable animations?",
-        message: "Sacruda has detected that your device has Reduced Motion activated. Do you want Sacruda to reduce animations also?",
+        message:
+          "Sacruda has detected that your device has Reduced Motion activated. Do you want Sacruda to reduce animations also?",
         buttons: [
           {
             caption: "Don't show again",

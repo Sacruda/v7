@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { IAdminPortalRuntime } from "$interfaces/runtimes/IAdminPortalRuntime";
+  import NewTabs from "$lib/NewTabs.svelte";
   import type { UserStatistics } from "$types/server/admin";
   import { onMount } from "svelte";
   import type { ViewUserData } from "../../types";
@@ -14,7 +15,6 @@
   import UserStatisticsComponent from "./ViewUser/UserStatistics.svelte";
   import UserTwoFactor from "./ViewUser/UserTwoFactor.svelte";
   import UserVersioning from "./ViewUser/UserVersioning.svelte";
-  import NewTabs from "$lib/NewTabs.svelte";
 
   const { process, data }: { process: IAdminPortalRuntime; data: ViewUserData } = $props();
   const { redacted } = process;

@@ -77,7 +77,8 @@ export class ConfigurationBuilder<T = object> {
     const cooldown = this.#cooldown;
     let initialRun = true;
 
-    if (!savePath && !localStorageKey) throw new Error("savePath or localStorageKey is required. Use WritesTo or WithLocalStorage to set");
+    if (!savePath && !localStorageKey)
+      throw new Error("savePath or localStorageKey is required. Use WritesTo or WithLocalStorage to set");
     if (!store) throw new Error("store is required. Use ReadsFrom to set");
 
     this.Log(`Building new configurator for ${savePath} (process ${process?.name ?? "<none>"})`);

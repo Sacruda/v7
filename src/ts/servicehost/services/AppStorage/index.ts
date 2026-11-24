@@ -4,7 +4,7 @@ import type { IServiceHost } from "$interfaces/IServiceHost";
 import type { IThirdPartyAppProcess } from "$interfaces/IThirdPartyAppProcess";
 import type { AppStorage, AppStoreCb, IApplicationStorage } from "$interfaces/services/IApplicationStorage";
 import { BuiltinAppImportPathAbsolutes } from "$ts/apps/store";
-import { SacrudaVersion, Daemon, Env, Fs, State, SysDispatch } from "$ts/env";
+import { Daemon, Env, Fs, SacrudaVersion, State, SysDispatch } from "$ts/env";
 import { ArcBuild } from "$ts/metadata/build";
 import { ArcMode } from "$ts/metadata/mode";
 import { CommandResult } from "$ts/result";

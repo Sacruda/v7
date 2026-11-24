@@ -7,7 +7,7 @@ import { formatBytes, join } from "$ts/util/fs";
 import { ElevationLevel } from "$types/system/elevation";
 import type { Arguments } from "$types/terminal";
 import dayjs from "dayjs";
-import { BLUE, BOLD, BRBLUE, BRGREEN, BRPURPLE, CLRROW, CURUP, RESET, UNDERLINE, WHITE } from "../colors";
+import { BOLD, BRBLUE, BRGREEN, BRPURPLE, CLRROW, CURUP, RESET, UNDERLINE } from "../colors";
 import { TerminalProcess } from "../process";
 
 const typeCaptions: Record<string, string> = {

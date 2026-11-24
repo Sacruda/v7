@@ -1,8 +1,8 @@
 <p>Before you continue, please beware of the following warnings and disclaimers:</p>
 <ol>
   <li>
-    User styles can make your Sacruda account unusable if you change the wrong thing. If you can't access your account normally, you
-    can change the user styles via Safe Mode.
+    User styles can make your Sacruda account unusable if you change the wrong thing. If you can't access your account normally,
+    you can change the user styles via Safe Mode.
   </li>
   <li>
     The CSS you write here <b>will be saved to any themes you make</b>. This also means that this CSS may get discarded if you

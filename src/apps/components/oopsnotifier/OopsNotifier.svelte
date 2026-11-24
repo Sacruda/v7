@@ -11,8 +11,8 @@
   <h1>{data?.id === "Sacruda" ? "System error occurred" : `${data?.metadata?.name || "Something"} crashed`}</h1>
   <p>
     {#if data?.id === "Sacruda"}
-      An error occurred while running some system code. Sacruda might be unstable until you restart, the stack trace might tell you
-      why the error occurred.
+      An error occurred while running some system code. Sacruda might be unstable until you restart, the stack trace might tell
+      you why the error occurred.
     {:else if !process.parseFailed}
       If you were in the middle of something, the information you were working on might be lost. You can view the stack trace,
       which can tell you why the app crashed.

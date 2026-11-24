@@ -7,7 +7,7 @@ import type { IUserDaemon } from "$interfaces/IUserDaemon";
 import type { GenericObjectViewerOptions, IGenericObjectViewerRuntime } from "$interfaces/runtimes/IGenericObjectViewerRuntime";
 import type { IGlobalLoadIndicatorRuntime } from "$interfaces/runtimes/IGlobalLoadIndicatorRuntime";
 import SafeModeNotice from "$lib/Daemon/SafeModeNotice.svelte";
-import { SacrudaVersion, Daemon, Env, Server, Stack, SysDispatch } from "$ts/env";
+import { Daemon, Env, SacrudaVersion, Server, Stack, SysDispatch } from "$ts/env";
 import { ArcBuild } from "$ts/metadata/build";
 import { ArcMode } from "$ts/metadata/mode";
 import { CommandResult } from "$ts/result";

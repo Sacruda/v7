@@ -1,4 +1,5 @@
 <script lang="ts">
+  import basic from "$ts/basic/highlight";
   import type { ReadableStore } from "$types/shared/writable";
   import hljs from "highlight.js";
   import css from "highlight.js/lib/languages/css";
@@ -11,7 +12,6 @@
   import typescript from "highlight.js/lib/languages/typescript";
   import xml from "highlight.js/lib/languages/xml";
   import yaml from "highlight.js/lib/languages/yaml";
-  import basic from "$ts/basic/highlight";
   import { onMount } from "svelte";
 
   const {

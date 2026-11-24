@@ -3,7 +3,6 @@
   import type { IAdminPortalRuntime } from "$interfaces/runtimes/IAdminPortalRuntime";
   import type { IAdminBootstrapper } from "$interfaces/services/IAdminBootstrapper";
   import CircularProgress from "$lib/CircularProgress.svelte";
-  import ProfilePicture from "$lib/ProfilePicture.svelte";
   import Spinner from "$lib/Spinner.svelte";
   import { Daemon, Env, Fs } from "$ts/env";
   import { formatBytes } from "$ts/util/fs";

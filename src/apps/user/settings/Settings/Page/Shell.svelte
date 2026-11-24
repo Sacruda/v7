@@ -67,7 +67,10 @@
       </select>
     </Option>
     <Option caption="Weather location">
-      <button onclick={() => process.showSlide("shell_weatherLocation")} disabled={process.safeMode || $userPreferences.weatherSettings.displayMode === "disabled"}>Change...</button>
+      <button
+        onclick={() => process.showSlide("shell_weatherLocation")}
+        disabled={process.safeMode || $userPreferences.weatherSettings.displayMode === "disabled"}>Change...</button
+      >
     </Option>
   </Section>
 

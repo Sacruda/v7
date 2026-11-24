@@ -8,6 +8,6 @@
 
 <div class="opened-editors">
   {#each $queries as query, i (query.id)}
-    <Query {process} {query} {i}/>
+    <Query {process} {query} {i} />
   {/each}
 </div>

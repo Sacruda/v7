@@ -1,5 +1,5 @@
 import type { IArcTerminal } from "$interfaces/IArcTerminal";
-import { SacrudaVersion, Env, Server, State } from "$ts/env";
+import { Env, SacrudaVersion, Server, State } from "$ts/env";
 import { ArcBuild } from "$ts/metadata/build";
 import { ArcMode } from "$ts/metadata/mode";
 import { authcode } from "$ts/util";

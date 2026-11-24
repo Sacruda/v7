@@ -4,7 +4,6 @@ import { AppProcess } from "$ts/apps/process";
 import { Daemon } from "$ts/env";
 import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
 import type { AppProcessData } from "$types/apps/app";
-import type { User } from "$types/server/admin";
 import type { Mailbroker } from "$types/server/mailbroker";
 import type { ExpandedUserInfo } from "$types/user";
 import { MailbrokerSendOverlay } from "./types";
