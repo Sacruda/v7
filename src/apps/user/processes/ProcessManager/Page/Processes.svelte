@@ -35,15 +35,17 @@
 <ActionBar>
   {#snippet leftContent()}
     {#if process.adminBootstrapper}
-      <ActionButton icon="shield" onclick={() => (allUsers = !allUsers)}>
+      <ActionButton icon={!allUsers ? "shield" : ""} onclick={() => (allUsers = !allUsers)}>
         {#if allUsers}
-          Show only your processes
+          Your processes
         {:else}
-          Show processes for all users
+          Processes for all users
         {/if}
       </ActionButton>
     {/if}
-    <ActionSubtle text="{$running} running {Plural('task', $running)}"></ActionSubtle>
+    {#if !allUsers}
+      <ActionSubtle text="{$running} running {Plural('task', $running)}"></ActionSubtle>
+    {/if}
   {/snippet}
   {#snippet rightContent()}
     {#if !allUsers}
