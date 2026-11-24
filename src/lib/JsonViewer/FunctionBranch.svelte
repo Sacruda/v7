@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { ReadableStore } from "$types/shared/writable";
   import js_beautify from "js-beautify";
-  import StoreBranch from "./StoreBranch.svelte";
   import PropertyKey from "./PropertyKey.svelte";
+  import StoreBranch from "./StoreBranch.svelte";
 
   let { key, value, expand = false }: { key: string; value: Function; expand?: boolean } = $props();
   let valueAsStore = $derived(value as ReadableStore<any>);

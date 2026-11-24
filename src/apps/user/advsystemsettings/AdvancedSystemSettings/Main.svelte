@@ -2,7 +2,7 @@
   import type { IAdvSysSetRuntime } from "$interfaces/runtimes/IAdvSysSetRuntime";
   import type { IApplicationStorage } from "$interfaces/services/IApplicationStorage";
   import Icon from "$lib/Icon.svelte";
-  import { SacrudaVersion, Daemon, Env, Server, Stack, State } from "$ts/env";
+  import { Daemon, Env, SacrudaVersion, Server, Stack, State } from "$ts/env";
   import { KernelModules } from "$ts/kernel/getters";
   import { ArcBuild } from "$ts/metadata/build";
   import { ArcMode } from "$ts/metadata/mode";

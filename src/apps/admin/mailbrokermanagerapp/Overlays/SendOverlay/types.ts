@@ -9,6 +9,6 @@ export namespace MailbrokerSendOverlay {
     Unknown,
     Username,
     UserId,
-    Url
+    Url,
   }
 }

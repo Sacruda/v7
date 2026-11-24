@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { IProcessManagerRuntime } from "$interfaces/runtimes/IProcessManagerRuntime";
   import type { IProcess } from "$interfaces/IProcess";
+  import type { IProcessManagerRuntime } from "$interfaces/runtimes/IProcessManagerRuntime";
   import { Stack } from "$ts/env";
   import { onMount } from "svelte";
-  import Row from "./Tree/Row.svelte";
   import Header from "./Header.svelte";
+  import Row from "./Tree/Row.svelte";
 
   const { process }: { process: IProcessManagerRuntime } = $props();
   const { running } = process;
@@ -23,10 +23,10 @@
 <table class="process-tree">
   <Header />
   <colgroup>
-    <col width="59%">
-    <col width="1%">
-    <col width="20%">
-    <col width="20%">
+    <col width="59%" />
+    <col width="1%" />
+    <col width="20%" />
+    <col width="20%" />
   </colgroup>
   {#each [...map] as [pid, proc], i (`${i}-${pid} ${proc.name}`)}
     {#if !proc.parentPid || !Stack.getProcess(proc.parentPid)}

@@ -16,9 +16,7 @@
     clientId: string;
   } = $props();
 
-  let filtered = $derived(
-    processes.filter((proc) => (parentPid === undefined ? !proc.parentPid : proc.parentPid === parentPid))
-  );
+  let filtered = $derived(processes.filter((proc) => (parentPid === undefined ? !proc.parentPid : proc.parentPid === parentPid)));
 </script>
 
 {#each filtered as proc (proc.pid)}

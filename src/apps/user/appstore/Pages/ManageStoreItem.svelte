@@ -30,8 +30,8 @@
     <div class="notice warning">
       <span class="lucide icon-triangle-alert"></span>
       <p>
-        This package has been blocked by an Sacruda Administrator! It might violate our rules. You should have received a message in
-        your Messages App explaining the verdict. Contact us so that we can unblock your package.
+        This package has been blocked by an Sacruda Administrator! It might violate our rules. You should have received a message
+        in your Messages App explaining the verdict. Contact us so that we can unblock your package.
       </p>
     </div>
   {/if}

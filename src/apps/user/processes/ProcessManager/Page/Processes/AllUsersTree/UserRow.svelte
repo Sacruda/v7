@@ -2,8 +2,8 @@
   import Icon from "$lib/Icon.svelte";
   import type { DispatchClientListItem } from "$types/system/dispatch";
   import type { ExpandedUserInfo } from "$types/user";
-  import ClientRow from "./ClientRow.svelte";
   import { useExpansion } from "../../../../expansion";
+  import ClientRow from "./ClientRow.svelte";
 
   let {
     user,

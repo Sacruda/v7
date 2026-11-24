@@ -10,7 +10,7 @@ export const MinesweeperBestTimesApp: App = {
     author: "Izaak Kuipers",
   },
   position: { centered: true },
-  size: { w: 340, h: 160 }, 
+  size: { w: 340, h: 160 },
   minSize: { w: 340, h: 160 },
   maxSize: { w: 340, h: 160 },
   state: {

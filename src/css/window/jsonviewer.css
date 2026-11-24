@@ -51,7 +51,7 @@ div.json-viewer div.row {
     font-style: italic;
 
     &:hover {
-        opacity: 1;
+      opacity: 1;
     }
   }
 

@@ -44,6 +44,7 @@ import type { QueryResult } from "$types/server/query";
 import type { SharedDriveType } from "$types/server/shares";
 import type { Service } from "$types/services/service";
 import type { BetaFeedback } from "$types/system/beta";
+import type { GlobalDispatchProcessSummary } from "$types/system/dispatch";
 import type { FilesystemProgressCallback, UserQuota } from "$types/system/fs";
 import type { ArcPackage, StoreItem } from "$types/tpa/package";
 import type { ExpandedUserInfo, UserInfo, UserPreferences } from "$types/user";
@@ -52,11 +53,10 @@ import { fromExtension } from "human-filetypes";
 import beautify from "js-beautify";
 import JSZip from "jszip";
 import { parse } from "stacktrace-parser";
+import { GetFsIndexDuplicates } from "./jobs/GetFsIndexDuplicates";
 import { IndexAllJob } from "./jobs/IndexAllJob";
 import { AdminProtocolHandlers } from "./proto";
 import { AdminScopes } from "./store";
-import type { GlobalDispatchProcessSummary } from "$types/system/dispatch";
-import { GetFsIndexDuplicates } from "./jobs/GetFsIndexDuplicates";
 
 export class AdminBootstrapper extends BaseService implements IAdminBootstrapper {
   private userInfo: UserInfo | undefined;

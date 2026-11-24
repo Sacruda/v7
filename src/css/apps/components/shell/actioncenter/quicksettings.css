@@ -52,7 +52,7 @@ div.shell div.actioncenter div.quick-settings div.sep {
 
 div.shell div.actioncenter div.quick-settings button.active {
   background-color: var(--accent-textual);
-  color: var(--accent-textual-fg  );
+  color: var(--accent-textual-fg);
 }
 
 div.shell div.actioncenter div.quick-settings button.active:hover {

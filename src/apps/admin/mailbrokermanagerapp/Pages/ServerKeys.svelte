@@ -43,7 +43,7 @@
   <h1>{data.length} {Plural("server key", data.length)}</h1>
   <div class="search-bar">
     <span class="lucide icon-search"></span>
-    <input type="text" placeholder="Search server keys" bind:value={$searchValue}/>
+    <input type="text" placeholder="Search server keys" bind:value={$searchValue} />
   </div>
   <button
     class="suggested"

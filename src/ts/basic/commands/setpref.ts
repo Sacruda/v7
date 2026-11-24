@@ -9,7 +9,7 @@ export class SetprefCommand extends BasicCommand {
     const [rawHierarchy, ...values] = await this.interpreter.getStrings(line, false);
 
     if (!rawHierarchy) {
-      return "No hierarchy found. Did you wrap it in a string?"
+      return "No hierarchy found. Did you wrap it in a string?";
     }
 
     if (values.length !== 1) {

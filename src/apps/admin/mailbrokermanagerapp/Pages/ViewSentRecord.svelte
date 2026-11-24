@@ -58,7 +58,7 @@
       return;
     }
 
-    process.switchPage("sent")
+    process.switchPage("sent");
   }
 </script>
 

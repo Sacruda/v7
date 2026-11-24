@@ -198,13 +198,13 @@ export function ShellContextMenu(runtime: IShellRuntime): AppContextMenu {
         },
       },
       {
-        caption:"Process info",
+        caption: "Process info",
         icon: "book",
         action: (proc: IAppProcess) => {
           if (!proc) return;
 
           runtime.spawnOverlayApp("ProcessInfoApp", runtime.pid, proc);
-        }
+        },
       },
       {
         caption: "Close window",

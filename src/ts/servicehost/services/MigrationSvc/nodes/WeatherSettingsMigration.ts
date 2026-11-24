@@ -1,8 +1,7 @@
 import type { IMigrationNodeConstructor } from "$interfaces/IMigrationNode";
 import type { IMigrationService } from "$interfaces/services/IMigrationService";
 import { Daemon } from "$ts/env";
-import { DefaultUserPreferences } from "$ts/user/default";
-import type { MigrationStatusCallback, MigrationResult } from "$types/services/migrations";
+import type { MigrationResult, MigrationStatusCallback } from "$types/services/migrations";
 import { MigrationNode } from "../node";
 
 export class WeatherSettingsMigration extends MigrationNode {

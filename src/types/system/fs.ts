@@ -176,4 +176,3 @@ export const DefaultUserQuota: UserQuota = {
   percentage: 0,
   unknown: true,
 };
-

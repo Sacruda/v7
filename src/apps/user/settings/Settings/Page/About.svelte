@@ -3,7 +3,7 @@
   import AccentedLogo from "$lib/AccentedLogo.svelte";
   import Icon from "$lib/Icon.svelte";
   import { Logo } from "$ts/branding";
-  import { SacrudaVersion, BETA } from "$ts/env";
+  import { BETA, SacrudaVersion } from "$ts/env";
   import { ArcBuild } from "$ts/metadata/build";
   import { ArcMode } from "$ts/metadata/mode";
 

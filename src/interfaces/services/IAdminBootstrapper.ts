@@ -25,11 +25,11 @@ import type { Mailbroker } from "$types/server/mailbroker";
 import type { QueryResult } from "$types/server/query";
 import type { SharedDriveType } from "$types/server/shares";
 import type { BetaFeedback } from "$types/system/beta";
+import type { GlobalDispatchProcessSummary } from "$types/system/dispatch";
 import type { FilesystemProgressCallback, FsAccess, UserQuota } from "$types/system/fs";
 import type { StoreItem } from "$types/tpa/package";
 import type { ExpandedUserInfo, UserInfo, UserPreferences } from "$types/user";
 import type { AxiosInstance } from "axios";
-import type { GlobalDispatchProcessSummary } from "$types/system/dispatch";
 
 export interface IAdminBootstrapper extends IBaseService {
   Jobs: IAdminBootstrapperJobConstructor[];

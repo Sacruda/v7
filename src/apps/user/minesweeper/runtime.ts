@@ -1,15 +1,15 @@
+import type { IAppProcess } from "$interfaces/IAppProcess";
 import { AppProcess } from "$ts/apps/process";
 import { ConfigurationBuilder } from "$ts/config";
-import type { IAppProcess } from "$interfaces/IAppProcess";
 import { Stack } from "$ts/env";
 import { MessageBox } from "$ts/util/dialog";
 import { Store } from "$ts/writable";
 import type { AppProcessData } from "$types/apps/app";
 import { MinesweeperAltMenu } from "./altmenu";
 import { MinesweeperBestTimesApp } from "./Overlays/besttimes/MinesweeperBestTimesApp";
+import { MinesweeperHighScoreApp } from "./Overlays/highscore/MineSweeperHighScoreApp";
 import { DefaultMinesweeperConfiguration, MinesweeperDifficulties } from "./store";
 import { type MinesweeperCell, type MinesweeperGrid, type MinesweeperMode, type MinesweeperSettings } from "./types";
-import { MinesweeperHighScoreApp } from "./Overlays/highscore/MineSweeperHighScoreApp";
 
 export class MinesweeperRuntime extends AppProcess implements IAppProcess {
   private durationInterval?: NodeJS.Timeout;

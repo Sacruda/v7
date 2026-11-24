@@ -4,6 +4,7 @@
     fill="black" stroke="#dddddd" />
   <path d="M20.5 17.5V2.50009H1.5V17.5H20.5Z" fill="black" stroke="#dddddd" />
   <path d="M18.5 15.5V4.5H3.5V15.5H18.5Z" fill="black" stroke="#dddddd" />
-  <path d="M8 7V9H9V7H8ZM13 7V9H14V7H13ZM8 11V12H9H13H14V11H13H9H8ZM14 12V13H15V12H14ZM8 12H7V13H8V12Z"
+  <path
+    d="M8 7V9H9V7H8ZM13 7V9H14V7H13ZM8 11V12H9H13H14V11H13H9H8ZM14 12V13H15V12H14ZM8 12H7V13H8V12Z"
     fill="#dddddd" />
 </svg>

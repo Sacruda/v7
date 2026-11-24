@@ -346,7 +346,8 @@ export class SettingsRuntime extends AppProcess implements ISettingsRuntime {
       MessageBox(
         {
           title: "Something went wrong",
-          message: "An error occurred while disabling two-factor authentication for your account. Please contact Sacruda support.",
+          message:
+            "An error occurred while disabling two-factor authentication for your account. Please contact Sacruda support.",
           buttons: [{ caption: "Okay", suggested: true, action: () => {} }],
           sound: "arcos.dialog.error",
           image: "ErrorIcon",

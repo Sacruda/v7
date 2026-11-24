@@ -1,6 +1,5 @@
 import type { ContextMenuItem } from "$types/apps/app";
 import { MinesweeperRuntime } from "./runtime";
-import { MinesweeperDifficulties } from "./store";
 import { Difficulties } from "./types";
 
 export function MinesweeperAltMenu(runtime: MinesweeperRuntime): ContextMenuItem[] {
