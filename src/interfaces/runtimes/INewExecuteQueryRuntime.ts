@@ -22,6 +22,8 @@ export interface INewExecuteQueryRuntime extends IAppProcess {
   selectedColumns: ReadableStore<Record<string, DbQueryCollectionColumn[]>>;
   whereClauses: ReadableStore<NewExecuteQueryWhereClauses>;
   orderBy: ReadableStore<Record<string, DbQueryOrderBy>>;
+  queryResult: ReadableStore<ICommandResult<any[]>>;
+  conceiled: BooleanStore;
 
   get admin(): IAdminBootstrapper;
   Execute(): Promise<void>;
@@ -51,6 +53,7 @@ export interface INewExecuteQueryRuntime extends IAppProcess {
   // utils
   DisplayError(result: ICommandResult): Promise<void>;
   DisplayWarnings(warnings: string[]): Promise<void>;
+  SaveJson(): Promise<void>;
 }
 
 export interface INewExecuteQueryOverlayRuntime extends IAppProcess {

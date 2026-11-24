@@ -67,4 +67,15 @@
       border-radius: 7px;
     }
   }
+
+  &.value-from-column {
+    padding: 0 10px !important;
+    padding-left: 40px !important;
+    height: 40px;
+    background-color: var(--button-glass-active-bg);
+
+    h1 {
+      width: calc(100px - 25px) !important;
+    }
+  }
 }

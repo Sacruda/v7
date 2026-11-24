@@ -7,7 +7,15 @@
   import ActionSeparator from "$lib/Window/ActionBar/ActionSeparator.svelte";
 
   let { process }: { process: INewExecuteQueryRuntime } = $props();
-  const { selectedCollection, selectedColumns, refreshing: loading, whereClauses, executing, selectSavedQuery } = process;
+  const {
+    selectedCollection,
+    selectedColumns,
+    refreshing: loading,
+    whereClauses,
+    executing,
+    selectSavedQuery,
+    conceiled,
+  } = process;
 
   function clear() {
     $whereClauses[$selectedCollection] = [];
@@ -30,7 +38,7 @@
     {/if}
     <ActionSeparator />
     <label for="">
-      <input type="checkbox" name="" id="" />
+      <input type="checkbox" bind:checked={$conceiled} />
       Conceal sensitive values
     </label>
   {/snippet}

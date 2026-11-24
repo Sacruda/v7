@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { INewExecuteQueryRuntime } from "$interfaces/runtimes/INewExecuteQueryRuntime";
-  import type { DbQueryCollectionColumn } from "$types/server/admin";
+  import type { DbQueryCollectionColumn } from "$types/server/admin/dbquery";
   import { onMount } from "svelte";
 
   let { process, i }: { process: INewExecuteQueryRuntime; i: number } = $props();

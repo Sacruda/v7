@@ -35,17 +35,17 @@
 
     {#if $whereClauses[$selectedCollection][i].columnName}
       <ModeSelector {process} {i} />
-      <ActionIconButton
-        icon="workflow"
-        onclick={toggleRelational}
-        suggested={$whereClauses[$selectedCollection][i].relational}
-        title="Compare against the value of another column..."
-      />
+      {#if !$whereClauses[$selectedCollection][i].mode.includes("Defined")}
+        <ActionIconButton
+          icon="workflow"
+          onclick={toggleRelational}
+          suggested={$whereClauses[$selectedCollection][i].relational}
+          title="Compare against the value of another column..."
+        />
+      {/if}
     {/if}
 
-    {#if $whereClauses[$selectedCollection][i].relational && $whereClauses[$selectedCollection][i].valueFromColumn}
-      <ValueFromColumn {process} {i} />
-    {:else}
+    {#if !$whereClauses[$selectedCollection][i].relational || !$whereClauses[$selectedCollection][i].valueFromColumn}
       <ValueEntry {process} {i} bind:isHierarchial />
     {/if}
   </div>
@@ -54,3 +54,12 @@
     <ActionIconButton icon="trash-2" onclick={() => process.DeleteClause(i)} title="Delete clause" />
   </div>
 </div>
+
+{#if $whereClauses[$selectedCollection][i].relational && $whereClauses[$selectedCollection][i].valueFromColumn && !$whereClauses[$selectedCollection][i].mode.includes("defined")}
+  <div class="bar where-clause value-from-column">
+    <h1>From:</h1>
+    <div class="options">
+      <ValueFromColumn {process} {i} />
+    </div>
+  </div>
+{/if}
