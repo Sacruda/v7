@@ -63,9 +63,16 @@
   overflow: hidden;
 }
 
+#processManager > div.body div.tab-content {
+  display: flex;
+  flex-direction: column;
+}
+
 #processManager > div.body div.top {
+  position: relative;
   padding: 15px;
-  height: calc(100% - 51px);
+  height: 0;
+  flex-grow: 1;
   overflow-y: scroll;
   overflow-x: hidden;
   padding-right: 7px;

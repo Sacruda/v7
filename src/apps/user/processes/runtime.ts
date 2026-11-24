@@ -7,7 +7,7 @@ import { AppProcess } from "$ts/apps/process";
 import { Daemon, Env, Stack } from "$ts/env";
 import { ProcessesHelper } from "$ts/helpers/processes";
 import { ProcessKillResultCaptions } from "$ts/kernel/mods/stack/process/store";
-import { MessageBox } from "$ts/util/dialog";
+import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
 import { Store } from "$ts/writable";
 import type { AppProcessData } from "$types/apps/app";
 import { ElevationLevel } from "$types/system/elevation";
@@ -15,14 +15,16 @@ import type { ProcessKillResult } from "$types/system/process";
 import type { Component } from "svelte";
 import Processes from "./ProcessManager/Page/Processes.svelte";
 import Services from "./ProcessManager/Page/Services.svelte";
+import type { ICommandResult } from "$interfaces/ICommandResult";
 
 export class ProcessManagerRuntime extends AppProcess implements IProcessManagerRuntime {
-  public selected = Store<string>();
+  public selected = Store<string>("");
   public running = Store<number>(0);
   public tabs: Record<string, Component> = {
     Processes: Processes as any,
     Services: Services as any,
   };
+  allUsers = Store<boolean>(false);
   host: IServiceHost;
   get adminBootstrapper() {
     return this.host.getService<IAdminBootstrapper>("AdminBootstrapper")!;
@@ -43,6 +45,10 @@ export class ProcessManagerRuntime extends AppProcess implements IProcessManager
     if (existingInstance) {
       return false;
     }
+
+    this.allUsers.subscribe((v) => {
+      this.selected.set("");
+    });
   }
 
   //#endregion
@@ -185,5 +191,25 @@ export class ProcessManagerRuntime extends AppProcess implements IProcessManager
   processInfoFor(proc: IProcess) {
     this.Log(`processInfoFor: ${proc.pid}`);
     this.spawnOverlayApp("ProcessInfoApp", +Env.get("shell_pid"), proc);
+  }
+
+  async kickDispatchClient(id: string): Promise<ICommandResult> {
+    const result = await this.adminBootstrapper.KickDispatchClient(id);
+
+    if (!result.success) {
+      MessageBox(
+        {
+          title: "An error occurred",
+          message: `The Dispatch client could not be kicked. ${result.errorMessage ?? "Unknown failure."}`,
+          buttons: [BTN_OKAY_SUG],
+          sound: "arcos.dialog.error",
+          image: "ErrorIcon",
+        },
+        this.pid,
+        true
+      );
+    }
+
+    return result;
   }
 }

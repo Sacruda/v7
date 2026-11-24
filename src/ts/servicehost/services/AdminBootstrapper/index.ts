@@ -1522,6 +1522,14 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
       return CommandResult.AxiosError(e);
     }
   }
+
+  async KickDispatchClient(id: string): Promise<ICommandResult> {
+    try {
+      return CommandResult.FromResponse(await this.adminClient.post(`/users/dispatch/kick/one/${id}`));
+    } catch (e) {
+      return CommandResult.AxiosError(e);
+    }
+  }
 }
 
 export const adminService: Service = {
