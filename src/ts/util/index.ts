@@ -330,7 +330,7 @@ export function ToAxiosProgress(
 export const IsBeta = () =>
   !import.meta.env.DEV &&
   ArcMode() === "betabranch" &&
-  (location.hostname === "beta.arcweb.nl" || location.hostname === "localhost");
+  (location.hostname === "beta.sacruda.nl" || location.hostname === "localhost");
 
 const escapeMap: Record<string, string> = {
   "\\n": "\n",
@@ -352,4 +352,19 @@ export function escapeEscapeChars(str: string) {
     str = str.replaceAll(escapeMap[key], key);
   }
   return str;
+}
+
+export function isFunction(funcOrClass: Function) {
+  const propertyNames = Object.getOwnPropertyNames(funcOrClass);
+  return !propertyNames.includes("prototype") || propertyNames.includes("arguments");
+}
+
+export function uniqueStrings(input: string[]): string[] {
+  const result: string[] = [];
+
+  for (const item of input) {
+    if (!result.includes(item)) result.push(item);
+  }
+
+  return result;
 }

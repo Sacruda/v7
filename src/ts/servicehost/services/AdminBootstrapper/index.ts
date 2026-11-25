@@ -2,7 +2,7 @@ import type { ICommandResult } from "$interfaces/ICommandResult";
 import type { IServiceHost } from "$interfaces/IServiceHost";
 import type { IStoreConnector } from "$interfaces/modules/server/IStoreConnector";
 import type { IUserConnector } from "$interfaces/modules/server/IUserConnector";
-import type { IAdminBootstrapper } from "$interfaces/services/IAdminBootstrapper";
+import type { IAdminBootstrapper, IAdminBootstrapperJobConstructor } from "$interfaces/services/IAdminBootstrapper";
 import type { IDistributionServiceProcess } from "$interfaces/services/IDistributionServiceProcess";
 import type { IMessagingInterface } from "$interfaces/services/IMessagingInterface";
 import type { IProtocolServiceProcess } from "$interfaces/services/IProtocolServiceProcess";
@@ -26,6 +26,8 @@ import type {
   AuditLogQueryOptions,
   BugHuntGetResponse,
   BugReportSourceInformation,
+  DbQuery,
+  DbQueryCollectionColumn,
   FsAccess,
   FSItem,
   IpAddress,
@@ -50,12 +52,14 @@ import { fromExtension } from "human-filetypes";
 import beautify from "js-beautify";
 import JSZip from "jszip";
 import { parse } from "stacktrace-parser";
+import { IndexAllJob } from "./jobs/IndexAllJob";
 import { AdminProtocolHandlers } from "./proto";
 import { AdminScopes } from "./store";
+import { GetFsIndexDuplicates } from "./jobs/GetFsIndexDuplicates";
 
 export class AdminBootstrapper extends BaseService implements IAdminBootstrapper {
   private userInfo: UserInfo | undefined;
-  private get adminClient() {
+  get adminClient() {
     return Backend.create({
       headers: {
         Authorization: `Bearer ${Daemon.token}`,
@@ -66,6 +70,8 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
   }
 
   //#region LIFECYCLE
+
+  public Jobs: IAdminBootstrapperJobConstructor[] = [IndexAllJob, GetFsIndexDuplicates];
 
   constructor(pid: number, parentPid: number, name: string, host: IServiceHost, initBroadcast?: (msg: string) => void) {
     super(pid, parentPid, name, host, initBroadcast);
@@ -946,7 +952,7 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
         item.pkg.appId
       }\`) has been blocked by an administrator. This package is found to have copyrighted content, explicit depictions of sexual activity, or other inappropiate or illegal content.\n\nThe reason given by the administrator is:\n\n\`\`\`${
         reason || "(no reason given)"
-      }\`\`\`\n\nReply to this message to negotiate to have your package unblocked.\n\nNOTE: this is an automatically generated message, sent by the ArcOS Admin Bootstrapper. The only input given by the administrator was the reason for this action (if any).`,
+      }\`\`\`\n\nReply to this message to negotiate to have your package unblocked.\n\nNOTE: this is an automatically generated message, sent by the Sacruda Admin Bootstrapper. The only input given by the administrator was the reason for this action (if any).`,
       []
     );
 
@@ -972,7 +978,7 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
         item.pkg.appId
       }\`) has been unblocked by an administrator, and can be installed by users again.\n\nThe reason given by the administrator is:\n\n\`\`\`${
         reason || "(no reason given)"
-      }\`\`\`\n\nNOTE: this is an automatically generated message, sent by the ArcOS Admin Bootstrapper. The only input given by the administrator was the reason for this action (if any).`,
+      }\`\`\`\n\nNOTE: this is an automatically generated message, sent by the Sacruda Admin Bootstrapper. The only input given by the administrator was the reason for this action (if any).`,
       []
     );
 
@@ -1158,7 +1164,7 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
     if (!fileUrl?.startsWith("https")) url.pathname = fileUrl?.replace("./", "/") ?? "/";
     else url = new URL(fileUrl);
 
-    if (url.toString().includes("team.arcweb.nl")) {
+    if (url.toString().includes("team.sacruda.nl")) {
       return CommandResult.Error("Previews are not supported because their JS files aren't retained");
     }
 
@@ -1471,6 +1477,38 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
     try {
       const response = await this.adminClient.post(`/mailbroker/templates`, toForm(data));
       return CommandResult.Ok(response.data);
+    } catch (e) {
+      return CommandResult.AxiosError(e);
+    }
+  }
+
+  async RunJob(jobName: string, broadcast: (message: string) => void): Promise<ICommandResult> {
+    const job = this.Jobs.find((job) => job.name === jobName);
+    if (!job) return CommandResult.Error(`Unknown job '${jobName}'`);
+
+    const instance = new job(job.name);
+    return await instance._run(broadcast);
+  }
+
+  async DbQueryCollections(): Promise<ICommandResult<string[]>> {
+    try {
+      return CommandResult.FromResponse(await this.adminClient.get(`/dbquery/collections`));
+    } catch (e) {
+      return CommandResult.AxiosError(e);
+    }
+  }
+
+  async DbQueryColumns(collection: string): Promise<ICommandResult<DbQueryCollectionColumn[]>> {
+    try {
+      return CommandResult.FromResponse(await this.adminClient.get(`/dbquery/columns/${collection}`));
+    } catch (e) {
+      return CommandResult.AxiosError(e);
+    }
+  }
+
+  async DbQueryExecute<T = any>(query: DbQuery): Promise<ICommandResult<T[]>> {
+    try {
+      return CommandResult.FromResponse(await this.adminClient.post(`/dbquery/execute`, query));
     } catch (e) {
       return CommandResult.AxiosError(e);
     }

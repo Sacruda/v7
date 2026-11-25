@@ -7,7 +7,7 @@ import { formatBytes, join } from "$ts/util/fs";
 import { ElevationLevel } from "$types/system/elevation";
 import type { Arguments } from "$types/terminal";
 import dayjs from "dayjs";
-import { BRBLUE, BRGREEN, BRPURPLE, CLRROW, CURUP, RESET } from "../colors";
+import { BLUE, BOLD, BRBLUE, BRGREEN, BRPURPLE, CLRROW, CURUP, RESET, UNDERLINE, WHITE } from "../colors";
 import { TerminalProcess } from "../process";
 
 const typeCaptions: Record<string, string> = {
@@ -19,7 +19,7 @@ const typeCaptions: Record<string, string> = {
 
 export class PkgCommand extends TerminalProcess {
   public static keyword: string = "pkg";
-  public static description: string = "ArcOS package manager commandline";
+  public static description: string = "Sacruda package manager commandline";
   private distrib?: IDistributionServiceProcess;
 
   //#region LIFECYCLE
@@ -435,7 +435,7 @@ export class PkgCommand extends TerminalProcess {
   }
 
   async help(): Promise<number> {
-    this.rl!.println("ArcOS Package Manager\n\nUsage: pkg <command> [...]\n");
+    this.rl!.println("Sacruda Package Manager\n\nUsage: pkg <command> [...]\n");
     this.rl!.println("Commands:");
     this.rl!.println("- install <name>      Installs the specified package");
     this.rl!.println("- remove <name>       Removes a package, if installed");
@@ -453,12 +453,22 @@ export class PkgCommand extends TerminalProcess {
   async listAll(): Promise<number> {
     const all = await this.distrib!.getAllStoreItems();
     const installed = await this.distrib!.loadInstalledStoreItemList();
+    const notInstalled = all.filter((a) => !installed.find((b) => a._id === b._id));
 
-    this.rl!.println("");
+    if (installed.length) {
+      this.rl!.println(`\n${BOLD}${UNDERLINE}Installed${RESET}:\n`);
 
-    for (const item of all) {
-      const color = installed.filter((i) => item._id === i._id)[0] ? BRBLUE : RESET;
-      this.rl!.println(`- ${color}${item.name}${RESET}`);
+      for (const pkg of installed) {
+        this.rl!.println(`  ${BRBLUE}${pkg.name}${RESET}`);
+      }
+    }
+
+    if (notInstalled.length) {
+      this.rl!.println(`\n${BOLD}${UNDERLINE}Available${RESET}:\n`);
+
+      for (const pkg of notInstalled) {
+        this.rl!.println(`  ${pkg.name}`);
+      }
     }
 
     return 0;
@@ -466,10 +476,10 @@ export class PkgCommand extends TerminalProcess {
 
   async elevate(): Promise<boolean> {
     return await this.term!.elevate({
-      what: "ArcOS needs your permission to run the pkg command.",
+      what: "Sacruda needs your permission to run the pkg command.",
       image: "ArcTermIcon",
       title: "Package manager",
-      description: "ArcTerm command",
+      description: "Terminal command",
       level: ElevationLevel.medium,
     });
   }

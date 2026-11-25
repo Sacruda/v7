@@ -1,23 +1,19 @@
-import type { IBugHunt } from "$interfaces/modules/IBugHunt";
-import type { IServerManager } from "$interfaces/modules/IServerManager";
 import { LogLevel } from "../types/shared/logging";
-import { Env, getKMod, Kernel } from "./env";
+import { BugHunt, Env, Kernel, Server } from "./env";
 import { KernelIsPanicked, KernelLogs, KernelPremature } from "./kernel/getters";
 import { ASCII_ART } from "./kernel/intro";
 
 export function Crash(reason: ErrorEvent | PromiseRejectionEvent) {
   if (KernelIsPanicked()) return;
 
-  const bughunt = getKMod<IBugHunt>("bughunt", true);
-  const serverManager = getKMod<IServerManager>("server", true);
-  const connected = serverManager?.connected;
+  const connected = Server?.connected;
 
   const HEADER = [
     ...ASCII_ART,
     ``,
-    `---! [ ArcOS Crashed ] !---`,
+    `---! [ Sacruda Crashed ] !---`,
     ``,
-    `An exception took place that wasn't handled. ArcOS has been halted.`,
+    `An exception took place that wasn't handled. Sacruda has been halted.`,
     `Details of the error and the system log up to the crash can be found below.`,
     `Newest log item is at the top.`,
     ``,
@@ -46,8 +42,8 @@ export function Crash(reason: ErrorEvent | PromiseRejectionEvent) {
     .join("\n")}`;
 
   if (!import.meta.env.DEV && !Env.get("DEBUG_BUGHUNT_DISABLE"))
-    bughunt?.sendReport(
-      bughunt?.createReport({
+    BugHunt?.sendReport(
+      BugHunt?.createReport({
         title: !KernelPremature() ? `CRASH - ${brief}` : `Premature kernel failure`,
         body: `${stack}`.replaceAll(location.href, "./"),
       })

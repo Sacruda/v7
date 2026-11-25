@@ -1,7 +1,6 @@
-import type { IServerManager } from "$interfaces/modules/IServerManager";
 import type { IInitialSetupRuntime } from "$interfaces/runtimes/IIntialSetupRuntime";
 import { AppProcess } from "$ts/apps/process";
-import { getKMod, Server, Stack, State } from "$ts/env";
+import { Server, Stack, State } from "$ts/env";
 import { ErrorIcon, QuestionIcon, WarningIcon } from "$ts/images/dialog";
 import { AccountIcon, SecurityMediumIcon } from "$ts/images/general";
 import { ArcLicense } from "$ts/metadata/license";
@@ -30,7 +29,6 @@ export class InitialSetupRuntime extends AppProcess implements IInitialSetupRunt
   public email = Store<string>();
   public actionsDisabled = Store<boolean>(false);
   public showMainContent = Store<boolean>(false);
-  public server: IServerManager;
 
   public readonly pages = [Welcome, License, Identity, CheckInbox, Finish, FreshDeployment];
 
@@ -41,7 +39,7 @@ export class InitialSetupRuntime extends AppProcess implements IInitialSetupRunt
         action: async () => {
           State?.loadState("login");
         },
-        disabled: () => !!this.server?.serverInfo?.freshBackend,
+        disabled: () => !!Server.serverInfo?.freshBackend,
       },
       previous: {
         disabled: () => true,
@@ -141,15 +139,13 @@ export class InitialSetupRuntime extends AppProcess implements IInitialSetupRunt
       this.actionsDisabled.set(false);
     });
 
-    this.server = getKMod<IServerManager>("server");
-
-    this.pageNumber.set(this.server.serverInfo?.freshBackend ? this.pages.length - 1 : 0);
+    this.pageNumber.set(Server.serverInfo?.freshBackend ? this.pages.length - 1 : 0);
 
     this.setSource(__SOURCE__);
   }
 
   async render() {
-    if (this.server.serverInfo?.disableRegistration) {
+    if (Server.serverInfo?.disableRegistration) {
       throw new Error("InitialSetupRuntime.render: Registration is disabled on this server");
     }
 
@@ -180,7 +176,7 @@ export class InitialSetupRuntime extends AppProcess implements IInitialSetupRunt
       {
         title: "Just making sure...",
         message:
-          "By using ArcOS, you agree to the License Agreement. You may not violate any of the rules contained within this license. Continue?",
+          "By using Sacruda, you agree to the License Agreement. You may not violate any of the rules contained within this license. Continue?",
         buttons: [
           {
             caption: "Decline",
@@ -204,13 +200,13 @@ export class InitialSetupRuntime extends AppProcess implements IInitialSetupRunt
   }
 
   async viewLicense() {
-    this.Log("Opening ArcOS license message box");
+    this.Log("Opening Sacruda license message box");
 
     MessageBox(
       {
         image: SecurityMediumIcon,
-        title: "ArcOS License - GPLv3",
-        message: `By using ArcOS, you agree to the GPLv3 License contained within: <code class='block'>${htmlspecialchars(
+        title: "Sacruda License - GPLv3",
+        message: `By using Sacruda, you agree to the GPLv3 License contained within: <code class='block'>${htmlspecialchars(
           ArcLicense()
         )}</code>`,
         buttons: [
@@ -271,7 +267,7 @@ export class InitialSetupRuntime extends AppProcess implements IInitialSetupRunt
 
     const confirmed = await new Promise<boolean>((r) => {
       const emailNotice = !Server.serverInfo?.noEmailVerify
-        ? ` Please note that you <b>need</b> a valid email address in order to activate your account. Entering a non-existent email address will prevent you from creating your account. Deactivated accounts will be manually deleted by an ArcOS administrator after 24 hours.`
+        ? ` Please note that you <b>need</b> a valid email address in order to activate your account. Entering a non-existent email address will prevent you from creating your account. Deactivated accounts will be manually deleted by an Sacruda administrator after 24 hours.`
         : ``;
 
       MessageBox(
