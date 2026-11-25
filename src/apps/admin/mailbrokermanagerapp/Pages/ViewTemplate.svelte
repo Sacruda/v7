@@ -3,13 +3,13 @@
   import ActionBar from "$lib/Window/ActionBar.svelte";
   import ActionButton from "$lib/Window/ActionBar/ActionButton.svelte";
   import { AdminScopes } from "$ts/servicehost/services/AdminBootstrapper/store";
+  import { BTN_OKAY_SUG, GetConfirmation, MessageBox } from "$ts/util/dialog";
   import { Store } from "$ts/writable";
   import type { Mailbroker } from "$types/server/mailbroker";
   import type { Unsubscriber } from "$types/shared/writable";
   import { onDestroy, onMount, tick } from "svelte";
   import TemplateEditor from "./ViewTemplate/TemplateEditor.svelte";
   import TemplateHeader from "./ViewTemplate/TemplateHeader.svelte";
-  import { BTN_CANCEL, BTN_OKAY_SUG, GetConfirmation, MessageBox } from "$ts/util/dialog";
 
   interface PageProps {
     templateId: string;

@@ -1,6 +1,5 @@
 <script lang="ts" generics="TProc extends IAppProcess = IAppProcess, TProps extends object = object">
   import type { IAppProcess } from "$interfaces/IAppProcess";
-  import { executeOnSingleOrMultiple } from "@tsparticles/engine";
   import type { Component, Snippet } from "svelte";
 
   interface Props {

@@ -6,13 +6,13 @@ import Settings from "./Settings.svelte";
 export const SystemSettings: App = {
   metadata: {
     name: "System Settings",
-    author: "Izaak Kuipers",  
+    author: "Izaak Kuipers",
     version: "6.0.4",
     icon: "SettingsIcon",
     appGroup: "systemTools",
   },
-  size: { w: 810, h: 560 },
-  minSize: { w: 810, h: 560 },
+  size: { w: 810, h: 650 },
+  minSize: { w: 810, h: 650 },
   maxSize: { w: 1080, h: 800 },
   position: { centered: true },
   state: {

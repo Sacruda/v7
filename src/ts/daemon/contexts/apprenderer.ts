@@ -29,9 +29,9 @@ export class AppRendererUserContext extends UserContext implements IAppRendererU
     const accentDarkest = darkenColor(accent, 85);
     const accentLightTransparent = `${lightenColor(accent)}77`;
     const accentLightInvert = invertColor(lightenColor(accent));
-    const accentSuggestedStart = `#${accent}`
+    const accentSuggestedStart = `#${accent}`;
     const accentSuggestedEnd = darkenColor(accent, 10);
-    const accentSuggestedFg = bestForeground(accent); 
+    const accentSuggestedFg = bestForeground(accent);
     const accentDarkMediumFg = bestForeground(accentDarkMedium);
 
     return `

@@ -1,11 +1,11 @@
 <script lang="ts">
+  import type { IMailbrokerManagerRuntime } from "$interfaces/runtimes/IMailbrokerRuntime";
   import { Plural } from "$ts/util";
   import { Store } from "$ts/writable";
   import type { Mailbroker } from "$types/server/mailbroker";
   import type { Unsubscriber } from "$types/shared/writable";
   import { onDestroy, onMount } from "svelte";
   import SentListingOption from "./Sent/SentListingOption.svelte";
-  import type { IMailbrokerManagerRuntime } from "$interfaces/runtimes/IMailbrokerRuntime";
 
   let { data, process }: { data: Mailbroker.SentMail[]; process: IMailbrokerManagerRuntime } = $props();
 

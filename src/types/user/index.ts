@@ -79,7 +79,8 @@ export interface ShellPreferences {
   visuals: VisualPreferences;
   customStyle: CustomStylePreferences;
   actionCenter: {
-    weatherLocation?: { // made optional 2026-08-01
+    weatherLocation?: {
+      // made optional 2026-08-01
       latitude: number;
       longitude: number;
       name?: string;

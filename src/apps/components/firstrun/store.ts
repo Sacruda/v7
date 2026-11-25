@@ -1,9 +1,6 @@
-import type { ITotpConnector } from "$interfaces/modules/server/ITotpConnector";
 import { Daemon, SoundBus } from "$ts/env";
 import { UserPaths } from "$ts/user/store";
-import { MessageBox } from "$ts/util/dialog";
 import { join } from "$ts/util/fs";
-import { ElevationLevel } from "$types/system/elevation";
 import type { ArcShortcut } from "$types/system/shortcut";
 import type { TotpSetupGuiRuntime } from "../totpsetupgui/runtime";
 import DisplayName from "./FirstRun/Page/DisplayName.svelte";

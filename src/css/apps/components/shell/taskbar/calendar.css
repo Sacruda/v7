@@ -28,7 +28,7 @@
   pointer-events: none !important;
 }
 
-#arcShell div.taskbar div.calendar-popup>div {
+#arcShell div.taskbar div.calendar-popup > div {
   border-radius: 10px;
   box-shadow: var(--secondary-box-shadow);
   outline: var(--shell-component-outline) 1px solid;

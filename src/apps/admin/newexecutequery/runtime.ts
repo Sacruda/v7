@@ -5,6 +5,7 @@ import { AppProcess } from "$ts/apps/process";
 import { Daemon, Fs } from "$ts/env";
 import { CommandResult } from "$ts/result";
 import { AdminScopes } from "$ts/servicehost/services/AdminBootstrapper/store";
+import { UserPaths } from "$ts/user/store";
 import { arrayBufferToText, textToBlob } from "$ts/util/convert";
 import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
 import { tryJsonParse } from "$ts/util/json";
@@ -13,16 +14,23 @@ import { Store } from "$ts/writable";
 import type { App, AppProcessData } from "$types/apps/app";
 import type { DbQuery, DbQueryCollectionColumn, DbQueryOrderBy } from "$types/server/admin";
 import type { ExpandedUserInfo } from "$types/user";
+import ResultViewerApp from "./Overlays/ResultViewer";
 import SelectColumnsApp from "./Overlays/SelectColumns";
 import type { NewExecuteQueryWhereClauses, SavedQuery } from "./types";
 
 export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQueryRuntime {
   //#region LIFECYCLE
 
+  private readonly SAVED_QUERIES_PATH = "A:/NewQueries";
   public readonly USER_COLUMNS = ["userId", "authorId", "recipient", "repliesTo"];
   public users: ExpandedUserInfo[] = [];
-  public loading = Store(true);
+  public refreshing = Store<boolean>(true);
+  public executing = Store<boolean>(false);
+  public selectSavedQuery = Store<boolean>(false);
+  public conceiled = Store<boolean>(true);
+  public savedQueryList = Store<Record<string, SavedQuery>>({});
   public allowSensitiveColumns = false;
+  public queryResult = Store<ICommandResult<any[]>>(CommandResult.Error("No value"));
 
   public collections = Store<string[]>([]);
   public columns = Store<DbQueryCollectionColumn[]>();
@@ -37,6 +45,7 @@ export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQue
 
   protected overlayStore: Record<string, App> = {
     selectColumns: SelectColumnsApp,
+    resultViewer: ResultViewerApp,
   };
 
   constructor(pid: number, parentPid: number, app: AppProcessData) {
@@ -54,25 +63,25 @@ export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQue
   async stop() {}
 
   async render() {
+    this.refreshing.set(true);
     this.users = await this.admin.getAllUsers();
     await this.RefreshCollections();
-    this.loading.set(false);
+    await this.RefreshSavedQueryList();
+    this.refreshing.set(false);
   }
 
   async Execute(): Promise<void> {
+    this.executing.set(true);
+
     // TODO: make a proper result dialog or something
     const query = this.CompileDbQuery();
     const result = await this.admin.DbQueryExecute(query);
 
-    Daemon.helpers?.ViewGenericObject(
-      result,
-      {
-        dataName: "DbQuery_Result",
-        windowIcon: "ArcFindIcon",
-        windowTitle: `Query results for '${query.fromCollection}'`,
-      },
-      this.pid
-    );
+    this.queryResult.set(result);
+
+    await this.spawnOverlay("resultViewer", this);
+
+    this.executing.set(false);
   }
 
   //#endregion LIFECYCLE
@@ -90,10 +99,10 @@ export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQue
   }
 
   async SelectCollection(collection: string, quiet = false): Promise<ICommandResult> {
-    this.loading.set(true);
+    this.refreshing.set(true);
     const columnsResult = await this.admin.DbQueryColumns(collection);
 
-    this.loading.set(false);
+    this.refreshing.set(false);
 
     if (!columnsResult.success) {
       if (!quiet) await this.DisplayError(columnsResult);
@@ -116,6 +125,16 @@ export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQue
 
   async ShowSelectColumns(): Promise<void> {
     await this.spawnOverlay("selectColumns", this);
+  }
+
+  SelectAllColumns() {
+    const collection = this.selectedCollection();
+    const columns = this.columns();
+
+    this.selectedColumns.update((selectedColumns) => {
+      selectedColumns[collection] = columns.filter((column) => !column.sensitive || this.allowSensitiveColumns);
+      return selectedColumns;
+    });
   }
 
   //#endregion
@@ -243,6 +262,8 @@ export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQue
       return v;
     });
 
+    this.selectSavedQuery.set(false);
+
     return CommandResult.Ok(warnings);
   }
 
@@ -294,6 +315,28 @@ export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQue
     if (!result.success) {
       return this.DisplayError(result);
     }
+  }
+
+  private async RefreshSavedQueryList() {
+    const result = await Fs.bulk<SavedQuery>(this.SAVED_QUERIES_PATH, "json");
+    this.savedQueryList.set(result);
+  }
+
+  public async SaveJson() {
+    const result = this.queryResult();
+    if (!result?.success) return;
+
+    const [path] = await Daemon.files!.LoadSaveDialog({
+      isSave: true,
+      title: "Choose where to save the JSON",
+      icon: "SaveIcon",
+      extensions: [".json"],
+      startDir: UserPaths.Desktop,
+    });
+
+    if (!path) return;
+
+    await Fs.writeFile(path, textToBlob(JSON.stringify(result, null, 2), "application/json"));
   }
 
   //#endregion

@@ -28,8 +28,8 @@ import type {
   BugReportSourceInformation,
   DbQuery,
   DbQueryCollectionColumn,
-  FsAccess,
-  FSItem,
+  DirectFilesystemAccessor,
+  FilesystemIndexingItem,
   IpAddress,
   PartialUserTotp,
   ServerLogItem,
@@ -44,6 +44,7 @@ import type { QueryResult } from "$types/server/query";
 import type { SharedDriveType } from "$types/server/shares";
 import type { Service } from "$types/services/service";
 import type { BetaFeedback } from "$types/system/beta";
+import type { GlobalDispatchProcessSummary } from "$types/system/dispatch";
 import type { FilesystemProgressCallback, UserQuota } from "$types/system/fs";
 import type { ArcPackage, StoreItem } from "$types/tpa/package";
 import type { ExpandedUserInfo, UserInfo, UserPreferences } from "$types/user";
@@ -52,10 +53,10 @@ import { fromExtension } from "human-filetypes";
 import beautify from "js-beautify";
 import JSZip from "jszip";
 import { parse } from "stacktrace-parser";
+import { GetFsIndexDuplicates } from "./jobs/GetFsIndexDuplicates";
 import { IndexAllJob } from "./jobs/IndexAllJob";
 import { AdminProtocolHandlers } from "./proto";
 import { AdminScopes } from "./store";
-import { GetFsIndexDuplicates } from "./jobs/GetFsIndexDuplicates";
 
 export class AdminBootstrapper extends BaseService implements IAdminBootstrapper {
   private userInfo: UserInfo | undefined;
@@ -583,18 +584,18 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
     }
   }
 
-  async getAllFsAccessors(): Promise<FsAccess[]> {
+  async getAllFsAccessors(): Promise<DirectFilesystemAccessor[]> {
     if (this._disposed) return [];
     try {
       const response = await this.adminClient.get("/accessors");
 
-      return response.data as FsAccess[];
+      return response.data as DirectFilesystemAccessor[];
     } catch {
       return [];
     }
   }
 
-  async getFsAccessorsOf(username: string): Promise<FsAccess[]> {
+  async getFsAccessorsOf(username: string): Promise<DirectFilesystemAccessor[]> {
     if (this._disposed) return [];
     try {
       const response = await this.adminClient.get(`/accessors/${username}`);
@@ -627,23 +628,23 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
     }
   }
 
-  async getAllIndexingNodes(): Promise<FSItem[]> {
+  async getAllIndexingNodes(): Promise<FilesystemIndexingItem[]> {
     if (this._disposed) return [];
     try {
       const response = await this.adminClient.get(`/index`);
 
-      return response.data as FSItem[];
+      return response.data as FilesystemIndexingItem[];
     } catch {
       return [];
     }
   }
 
-  async getIndexingNodesOf(username: string): Promise<FSItem[]> {
+  async getIndexingNodesOf(username: string): Promise<FilesystemIndexingItem[]> {
     if (this._disposed) return [];
     try {
       const response = await this.adminClient.get(`/index/${username}`);
 
-      return response.data as FSItem[];
+      return response.data as FilesystemIndexingItem[];
     } catch {
       return [];
     }
@@ -756,12 +757,12 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
     }
   }
 
-  async getShareAccessors(shareId: string): Promise<FSItem[]> {
+  async getShareAccessors(shareId: string): Promise<FilesystemIndexingItem[]> {
     if (this._disposed) return [];
     try {
       const response = await this.adminClient.get(`/share/accessors/${shareId}`);
 
-      return response.data as FSItem[];
+      return response.data as FilesystemIndexingItem[];
     } catch {
       return [];
     }
@@ -1482,6 +1483,14 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
     }
   }
 
+  async getDispatchProcessesSummary(): Promise<ICommandResult<GlobalDispatchProcessSummary>> {
+    try {
+      return CommandResult.FromResponse(await this.adminClient.get(`/dispatch/processes`));
+    } catch (e) {
+      return CommandResult.AxiosError(e);
+    }
+  }
+
   async RunJob(jobName: string, broadcast: (message: string) => void): Promise<ICommandResult> {
     const job = this.Jobs.find((job) => job.name === jobName);
     if (!job) return CommandResult.Error(`Unknown job '${jobName}'`);
@@ -1509,6 +1518,14 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
   async DbQueryExecute<T = any>(query: DbQuery): Promise<ICommandResult<T[]>> {
     try {
       return CommandResult.FromResponse(await this.adminClient.post(`/dbquery/execute`, query));
+    } catch (e) {
+      return CommandResult.AxiosError(e);
+    }
+  }
+
+  async KickDispatchClient(id: string): Promise<ICommandResult> {
+    try {
+      return CommandResult.FromResponse(await this.adminClient.post(`/users/dispatch/kick/one/${id}`));
     } catch (e) {
       return CommandResult.AxiosError(e);
     }

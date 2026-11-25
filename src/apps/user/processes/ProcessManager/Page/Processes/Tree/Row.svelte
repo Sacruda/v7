@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useLocalExpansion } from "$apps/user/processes/expansion";
   import type { IAppProcess } from "$interfaces/IAppProcess";
   import type { IProcess } from "$interfaces/IProcess";
   import type { IProcessManagerRuntime } from "$interfaces/runtimes/IProcessManagerRuntime";
@@ -23,6 +24,9 @@
   const { selected } = process;
   const { focusedPid } = Stack.renderer!;
 
+  const { isExpanded: checkExpanded, toggle } = useLocalExpansion();
+  const KEY = `lproc:${proc.pid}`;
+
   let name = $state<string>();
   let icon = $state<string>();
   let appId = $state<string>();
@@ -30,6 +34,7 @@
   let closing = $state<boolean>(false);
   let memory = $state<number>();
   let memoryInterval = $state<NodeJS.Timeout>();
+  let isExpanded = $derived(checkExpanded(KEY));
 
   onMount(() => {
     Stack.store.subscribe(() => {
@@ -37,6 +42,10 @@
     });
 
     memory = proc.MEMORY; // only once because laggy
+
+    if (indent === 0 && !isExpanded) {
+      toggle(KEY);
+    }
 
     if (ProcessesHelper.IsAnyAppProcess(proc)) {
       const { app } = proc;
@@ -71,7 +80,10 @@
     class="row"
     style="--indent: {indent};"
     class:closing
-    onclick={() => ($selected = `proc#${pid}`)}
+    onclick={() => {
+      toggle(KEY);
+      $selected = `proc#${pid}`;
+    }}
     use:contextMenu={[
       [
         {
@@ -114,6 +126,7 @@
   >
     <td class="name">
       <div>
+        <span class="lucide" class:icon-chevron-right={!isExpanded} class:icon-chevron-down={isExpanded}></span>
         <Icon icon={icon ?? "DefaultIcon"} />
         <span>{name}{orphan ? " (orphaned)" : ""}</span>
         <span class="lucide icon-{ProcessStateIcons[proc.STATE]}"></span>
@@ -132,7 +145,7 @@
       <span>{appId || "-"}</span>
     </td>
   </tr>
-  {#if children.size}
+  {#if children.size && isExpanded}
     {#each [...children] as [pid, proc], i (`${i}-${pid} ${proc.name}`)}
       <Row {pid} {proc} {process} indent={indent + 1} />
     {/each}

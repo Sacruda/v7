@@ -2,7 +2,7 @@
   import { formatBytes } from "$ts/util/fs";
   import type { Mailbroker } from "$types/server/mailbroker";
 
-  let { template, deprecated }: { template: Mailbroker.MailTemplate; deprecated: boolean; } = $props();
+  let { template, deprecated }: { template: Mailbroker.MailTemplate; deprecated: boolean } = $props();
 </script>
 
 <div class="pills">

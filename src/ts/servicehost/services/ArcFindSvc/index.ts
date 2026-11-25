@@ -231,7 +231,7 @@ export class ArcFindService extends BaseService implements IArcFindService {
     const options = {
       includeScore: true,
       keys: ["caption", "description"],
-      threshold: 0.3
+      threshold: 0.3,
     };
 
     const fuse = new Fuse(this.searchItems, options);

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type { IQlorbRuntime } from "$interfaces/runtimes/IQlorbRuntime";
+  import { onMount } from "svelte";
   import Background from "./Main/Background.svelte";
   import Game from "./Main/Game.svelte";
   import OnScreenDisplay from "./Main/OnScreenDisplay.svelte";

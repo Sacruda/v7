@@ -24,7 +24,7 @@ export default function ArcBasicHighlighter(hljs: HLJSApi): Language {
     "THEN",
     "VAR",
     "WHILE",
-    "SETPREF"
+    "SETPREF",
   ];
 
   const VARGET = {

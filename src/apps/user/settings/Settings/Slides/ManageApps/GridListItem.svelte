@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { ISettingsRuntime } from "$interfaces/runtimes/ISettingsRuntime";
   import Icon from "$lib/Icon.svelte";
-  import ActionIconButton from "$lib/Window/ActionBar/ActionIconButton.svelte";
   import { Daemon } from "$ts/env";
   import type { App } from "$types/apps/app";
 

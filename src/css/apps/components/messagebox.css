@@ -1,6 +1,6 @@
 #messageBox {
   width: max-content !important;
-  height:fit-content !important;
+  height: fit-content !important;
   display: flex;
   flex-direction: column;
 }

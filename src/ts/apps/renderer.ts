@@ -7,6 +7,7 @@ import { __Console__ } from "$ts/console";
 import { BETA, BugHunt, Daemon, Env, Kernel, Stack, SysDispatch } from "$ts/env";
 import { ProcessesHelper } from "$ts/helpers/processes";
 import { BlankIcon } from "$ts/images/general";
+import { Sleep } from "$ts/sleep";
 import { contextProps } from "$ts/ui/context/actions.svelte";
 import { UUID } from "$ts/util/uuid";
 import { LogLevel } from "$types/shared/logging";
@@ -17,7 +18,6 @@ import { Process } from "../kernel/mods/stack/process/instance";
 import { Store } from "../writable";
 import { AppRendererError } from "./error";
 import { BuiltinAppImportPathAbsolutes } from "./store";
-import { Sleep } from "$ts/sleep";
 
 export class AppRenderer extends Process implements IAppRenderer {
   currentState: number[] = [];

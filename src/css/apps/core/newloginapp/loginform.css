@@ -39,7 +39,7 @@
       background-color: transparent;
 
       ::-webkit-input-placeholder {
-        color:#fff5
+        color: #fff5;
       }
     }
   }

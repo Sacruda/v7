@@ -1,7 +1,7 @@
 import type { IWriterRuntime } from "$interfaces/runtimes/IWriterRuntime";
 import { Env } from "$ts/env";
 import { getParentDirectory } from "$ts/util/fs";
-import type { ContextMenuItem } from "$types/apps/app";
+import type { ContextMenuItem } from "$types/apps";
 
 export function FileMenu(runtime: IWriterRuntime): ContextMenuItem {
   return {
@@ -35,10 +35,10 @@ export function FileMenu(runtime: IWriterRuntime): ContextMenuItem {
       },
       { sep: true },
       {
-        caption:"Print",
+        caption: "Print",
         action: () => {
           runtime.print();
-        }
+        },
       },
       { sep: true },
       {

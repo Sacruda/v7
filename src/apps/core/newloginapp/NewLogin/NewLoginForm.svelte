@@ -15,12 +15,12 @@
     unsub = State.subscribe((v) => {
       identity = "";
       password = "";
-    })
-  })
+    });
+  });
 
   onDestroy(() => {
     unsub?.();
-  })
+  });
 
   async function doLogin() {
     if ((!identity && !$State.selectedUser) || !password) return;

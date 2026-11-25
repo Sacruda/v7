@@ -459,9 +459,7 @@ export class LoginAppRuntime extends AppProcess implements ILoginAppRuntime {
 
   updateServerStuff() {
     if (Server.serverInfo) this.serverInfo.set(Server.serverInfo);
-    this.DEFAULT_WALLPAPER.set(
-      this.serverInfo()?.loginWallpaper ? `${Server.url}/loginbg${authcode()}` : Wallpapers.img39.url
-    );
+    this.DEFAULT_WALLPAPER.set(this.serverInfo()?.loginWallpaper ? `${Server.url}/loginbg${authcode()}` : Wallpapers.img39.url);
     this.loginBackground.set(this.DEFAULT_WALLPAPER());
   }
 
