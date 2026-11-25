@@ -30,7 +30,7 @@ export const ImageViewerApp: App = {
   id: "ImageViewer",
   hidden: true,
   opens: {
-    extensions: [".png", ".jpg", ".gif", ".webp", ".ico", ".bmp", ".tif", ".tiff", ".jpeg", ".svg"],
+    extensions: [".png", ".jpg", ".gif", ".webp", ".ico", ".bmp", ".jpeg", ".svg"],
   },
   noSafeMode: true,
   assets: {
