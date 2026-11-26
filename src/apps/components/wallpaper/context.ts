@@ -227,6 +227,12 @@ export function WallpaperContextMenu(runtime: IWallpaperRuntime): AppContextMenu
       },
       { sep: true },
       {
+        caption: "Open in Terminal",
+        icon: "terminal",
+        action: () => runtime.spawnApp("ArcTerm", runtime.shell?.pid, UserPaths.Desktop),
+      },
+      { sep: true },
+      {
         caption: "New",
         icon: "plus",
         subItems: [

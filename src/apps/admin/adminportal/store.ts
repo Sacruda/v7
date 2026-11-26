@@ -71,6 +71,7 @@ export const AdminPortalPageStore: AdminPortalPages = new Map<string, AdminPorta
       ],
       icon: "",
       parent: "bughunt",
+      requiresProps: true,
       props: async (process) => {
         const id = process.switchPageProps().id;
 
@@ -87,6 +88,7 @@ export const AdminPortalPageStore: AdminPortalPages = new Map<string, AdminPorta
       scopes: [AdminScopes.adminBugHuntGet],
       icon: "",
       parent: "viewBugReport",
+      requiresProps: true,
       props: async (process) => {
         const id = process.switchPageProps().id;
         const report = await process.admin.getBugReport(id);
@@ -145,6 +147,7 @@ export const AdminPortalPageStore: AdminPortalPages = new Map<string, AdminPorta
           migrations: await process.admin.getMigrationIndexFor(username),
         };
       },
+      requiresProps: true,
       scopes: [AdminScopes.adminBugHuntGet],
       parent: "users",
     },
@@ -171,6 +174,7 @@ export const AdminPortalPageStore: AdminPortalPages = new Map<string, AdminPorta
       props: async (process) => {
         return { users: await process.admin.getAllUsers(), accessors: await process.admin.getAllFsAccessors() };
       },
+      requiresProps: true,
       scopes: [AdminScopes.adminUsersList, AdminScopes.adminAccessorsGet],
       parent: "shares",
     },
@@ -212,6 +216,7 @@ export const AdminPortalPageStore: AdminPortalPages = new Map<string, AdminPorta
 
         return { item: await process.admin.getStoreItem(id) };
       },
+      requiresProps: true,
       scopes: [
         AdminScopes.adminStoreBlock,
         AdminScopes.adminStoreUnblock,
@@ -292,6 +297,7 @@ export const AdminPortalPageStore: AdminPortalPages = new Map<string, AdminPorta
       props: async (process) => {
         return { scopes: await process.admin.getAvailableScopes() };
       },
+      requiresProps: true,
       scopes: [AdminScopes.adminScopesAvailable],
     },
   ],

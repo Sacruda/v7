@@ -1,3 +1,10 @@
+window.Dot = () => {
+  if (window.__DW_READY__) return;
+  console.trace();
+  const stateLoader = document.querySelector("#stateLoader");
+  stateLoader.innerText += ".";
+};
+
 onload = function () {
   let prebooted = false;
   window.__DW_STATUS__ = "window.onload";
@@ -11,7 +18,7 @@ onload = function () {
     "4g": 30000, // 30 seconds
   };
 
-  stateLoader.innerText += ".";
+  Dot();
 
   function loadFail(r) {
     if (prebooted) return;

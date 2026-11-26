@@ -2,7 +2,7 @@ import type { NewExecuteQueryWhereClauses, SavedQuery } from "$apps/admin/newexe
 import type { IAppProcess } from "$interfaces/IAppProcess";
 import type { ICommandResult } from "$interfaces/ICommandResult";
 import type { IAdminBootstrapper } from "$interfaces/services/IAdminBootstrapper";
-import type { DbQuery, DbQueryCollectionColumn, DbQueryOrderBy } from "$types/server/admin";
+import type { DbQuery, DbQueryCollectionColumn, DbQueryOrderBy, DbQueryWhere } from "$types/server/admin";
 import type { BooleanStore, ReadableStore, StringStore } from "$types/shared/writable";
 import type { ExpandedUserInfo } from "$types/user";
 
@@ -54,6 +54,8 @@ export interface INewExecuteQueryRuntime extends IAppProcess {
   DisplayError(result: ICommandResult): Promise<void>;
   DisplayWarnings(warnings: string[]): Promise<void>;
   SaveJson(): Promise<void>;
+  CopyMongoQuery(): void;
+  IsIncomplete(where: DbQueryWhere): boolean;
 }
 
 export interface INewExecuteQueryOverlayRuntime extends IAppProcess {

@@ -4,6 +4,7 @@
   import Icon from "$lib/Icon.svelte";
   import Spinner from "$lib/Spinner.svelte";
   import { BlankIcon } from "$ts/images/general";
+  import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
   import { onMount, type Component } from "svelte";
   import Sidebar from "./AdminPortal/Sidebar.svelte";
   import StatusBar from "./AdminPortal/StatusBar.svelte";
@@ -19,6 +20,7 @@
   let loading = $state(true);
   let noAccess = $state(false);
   let pageProps = $state<Record<string, any>>({});
+  let canGoUp = $state<boolean>(false);
 
   onMount(() => {
     const sub = currentPage.subscribe(async (v) => {
@@ -38,6 +40,7 @@
         return;
       }
 
+      canGoUp = !!pageData?.parent && !AdminPortalPageStore.get(pageData.parent)?.requiresProps;
       Page = pageData?.content;
       pageProps = pageData?.props ? { ...$switchPageProps, ...(await pageData.props(process)) } : $switchPageProps;
       process.propSize.set(JSON.stringify(pageProps).length);
@@ -48,18 +51,33 @@
 
     return () => sub();
   });
+
+  function goUp() {
+    if (!canGoUp) {
+      MessageBox(
+        {
+          title: "Can't go up",
+          message: `The parent page can't be navigated to because there is no parent or the parent requires properties that the portal can't provide. You must navigate to this page from the top down instead.<br/><br/><b>Page</b>: ${$currentPage} - <b>Parent</b>: ${pageData!.parent}`,
+          buttons: [BTN_OKAY_SUG],
+          image: "InfoIcon",
+          sound: "arcos.dialog.info",
+        },
+        process.pid,
+        true
+      );
+
+      return;
+    }
+
+    process.switchPage(pageData?.parent!);
+  }
 </script>
 
 <Sidebar {process} />
 <div class="container {className}">
   <CustomTitlebar {process}>
     {#if pageData?.parent}
-      <button
-        class="lucide icon-arrow-up"
-        aria-label="Go back"
-        onclick={() => process.switchPage(pageData?.parent!)}
-        title="Parent directory"
-      ></button>
+      <button class="lucide icon-arrow-up" aria-label="Go back" onclick={goUp} title="Parent page"></button>
     {/if}
     <Icon icon={$windowIcon} fallback={BlankIcon} />
     <span>{$windowTitle}</span>

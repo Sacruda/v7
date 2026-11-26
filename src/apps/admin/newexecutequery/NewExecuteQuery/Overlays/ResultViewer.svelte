@@ -2,6 +2,8 @@
   import type { INewExecuteQueryOverlayRuntime } from "$interfaces/runtimes/INewExecuteQueryRuntime";
   import ActionBar from "$lib/Window/ActionBar.svelte";
   import ActionButton from "$lib/Window/ActionBar/ActionButton.svelte";
+  import ActionPill from "$lib/Window/ActionBar/ActionPill.svelte";
+  import ActionSeparator from "$lib/Window/ActionBar/ActionSeparator.svelte";
   import { Daemon } from "$ts/env";
   import { contextMenu } from "$ts/ui/context/actions.svelte";
   import { tryJsonStringify } from "$ts/util/json";
@@ -20,7 +22,15 @@
 
 <div class="query-result table-wrapper">
   {#if !$queryResult.success}
-    error: {$queryResult.errorMessage}
+    <div class="error">
+      <span class="lucide icon-circle-x"></span>
+      <div>
+        <h1>DbQuery unsuccessful</h1>
+        <p class="message">
+          {$queryResult.errorMessage}
+        </p>
+      </div>
+    </div>
   {:else}
     <table>
       <thead>
@@ -76,13 +86,18 @@
 
 <ActionBar>
   {#snippet leftContent()}
-    <label for="">
-      <input type="checkbox" bind:checked={$conceiled} />
-      Conceal sensitive values
-    </label>
+    {#if $queryResult.success}
+      <ActionPill key="Status">{$queryResult.successMessage}</ActionPill>
+      <ActionSeparator />
+      <label for="">
+        <input type="checkbox" bind:checked={$conceiled} />
+        Conceal sensitive values
+      </label>
+    {/if}
   {/snippet}
   {#snippet rightContent()}
-    <ActionButton onclick={() => process.parent.SaveJson()}>Save JSON</ActionButton>
+    <ActionButton onclick={() => process.parent.CopyMongoQuery()} disabled={!$queryResult.success}>Copy Mongo Query</ActionButton>
+    <ActionButton onclick={() => process.parent.SaveJson()} disabled={!$queryResult.success}>Save JSON</ActionButton>
     <ActionButton suggested onclick={() => process.closeWindow()}>Close</ActionButton>
   {/snippet}
 </ActionBar>

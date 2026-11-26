@@ -17,7 +17,7 @@
 
 <tr onclick={() => process.switchPage("viewScopes", { admin })}>
   <td>
-    <UsernameDisplay user={admin} {process} />
+    <UsernameDisplay user={admin} {process} noClick />
   </td>
   <td>
     <div class="pages">

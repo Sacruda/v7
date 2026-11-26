@@ -36,7 +36,8 @@ export function handleGlobalErrors() {
       __Console__.warn(e.reason);
     }
 
-    Crash(e);
+    Stack.BUSY = "";
+    // Crash(e);
 
     return false;
   }

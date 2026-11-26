@@ -53,6 +53,12 @@ export class AppRenderer extends Process implements IAppRenderer {
     });
   }
 
+  protected async stop(): Promise<any> {
+    for (const pid of this.currentState) {
+      this.remove(pid);
+    }
+  }
+
   disposedCheck() {
     Kernel.LogOperation("kproc", "renderer", "disposedCheck");
     if (this._disposed) {

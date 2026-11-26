@@ -162,7 +162,7 @@ export interface IAdminBootstrapper extends IBaseService {
   RunJob(jobName: string, broadcast: (message: string) => void): Promise<ICommandResult>;
   DbQueryCollections(): Promise<ICommandResult<string[]>>;
   DbQueryColumns(collection: string): Promise<ICommandResult<DbQueryCollectionColumn[]>>;
-  DbQueryExecute<T = any>(query: DbQuery): Promise<ICommandResult<T[]>>;
+  DbQueryExecute<T = any>(query: DbQuery, onProgress?: FilesystemProgressCallback): Promise<ICommandResult<T[]>>;
   getDispatchProcessesSummary(): Promise<ICommandResult<GlobalDispatchProcessSummary>>;
   KickDispatchClient(id: string): Promise<ICommandResult>;
 }

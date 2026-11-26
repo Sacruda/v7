@@ -107,4 +107,27 @@
       gap: 10px;
     }
   }
+
+  div.error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 15px;
+
+    span.lucide {
+      font-size: 48px;
+      color: var(--clr-red-fg);
+    }
+
+    h1 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    p {
+      opacity: 0.5;
+      font-family: "Source Code Pro";
+    }
+  }
 }

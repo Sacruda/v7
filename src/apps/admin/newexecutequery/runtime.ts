@@ -8,11 +8,12 @@ import { AdminScopes } from "$ts/servicehost/services/AdminBootstrapper/store";
 import { UserPaths } from "$ts/user/store";
 import { arrayBufferToText, textToBlob } from "$ts/util/convert";
 import { BTN_OKAY_SUG, MessageBox } from "$ts/util/dialog";
+import { formatBytes } from "$ts/util/fs";
 import { tryJsonParse } from "$ts/util/json";
 import { UUID } from "$ts/util/uuid";
 import { Store } from "$ts/writable";
 import type { App, AppProcessData } from "$types/apps/app";
-import type { DbQuery, DbQueryCollectionColumn, DbQueryOrderBy } from "$types/server/admin";
+import type { DbQuery, DbQueryCollectionColumn, DbQueryOrderBy, DbQueryWhere } from "$types/server/admin";
 import type { ExpandedUserInfo } from "$types/user";
 import ResultViewerApp from "./Overlays/ResultViewer";
 import SelectColumnsApp from "./Overlays/SelectColumns";
@@ -75,11 +76,25 @@ export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQue
 
     // TODO: make a proper result dialog or something
     const query = this.CompileDbQuery();
-    const result = await this.admin.DbQueryExecute(query);
 
-    this.queryResult.set(result);
+    const { stop, caption } = await Daemon.helpers!.GlobalLoadIndicator(
+      `Performing DbQuery transaction on ${this.selectedCollection()}...`
+    );
+
+    const result = await this.admin.DbQueryExecute(query, (prog) => {
+      caption.set(`Downloading transaction result. ${formatBytes(prog.value)} received.`);
+    });
+
+    if (result.success && result.result?.length === 0) {
+      this.queryResult.set(CommandResult.Error("Query yielded no results. You may want to try something else."));
+    } else {
+      this.queryResult.set(result);
+    }
+
+    caption.set(`Displaying result...`);
 
     await this.spawnOverlay("resultViewer", this);
+    await stop();
 
     this.executing.set(false);
   }
@@ -368,6 +383,17 @@ export class NewExecuteQueryRuntime extends AppProcess implements INewExecuteQue
       this.pid,
       true
     );
+  }
+
+  IsIncomplete(where: DbQueryWhere) {
+    return !where.columnName || !where.mode || !!(where.relational && !where.valueFromColumn?.columnName);
+  }
+
+  CopyMongoQuery(): void {
+    const ids = this.queryResult().result!.map((r) => `ObjectId("${r["_id"]}")`);
+    const result = `{ _id: { $in: [${ids.join(",")}] }}`;
+
+    navigator.clipboard.writeText(result);
   }
 
   //#endregion

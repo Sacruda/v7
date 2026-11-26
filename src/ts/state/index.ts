@@ -1,6 +1,7 @@
 import type { IAppProcess, IAppProcessConstructor } from "$interfaces/IAppProcess";
 import type { IStateHandler } from "$interfaces/IStateHandler";
 import { Kernel, Stack } from "$ts/env";
+import { HtmlUtil } from "$ts/util/html";
 import { LogLevel } from "$types/shared/logging";
 import type { State } from "../../types/system/state";
 import { Process } from "../kernel/mods/stack/process/instance";
@@ -28,8 +29,7 @@ export class StateHandler extends Process implements IStateHandler {
   }
 
   async start() {
-    const { htmlLoader } = this.getStateLoaders();
-    htmlLoader.innerText += ".";
+    Dot();
 
     await Sleep(100);
   }

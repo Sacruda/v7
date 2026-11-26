@@ -23,18 +23,21 @@
 
   const KEY = `all__user:${userId}_client:${client.id}`;
   const SELECTION = `gdc_${client.id}`;
-  const isCurrentClient = Env.get("DISPATCH_SOCK_ID") === "id";
+  const isCurrentClient = Env.get("DISPATCH_SOCK_ID") === id;
   let isExpanded = $derived(checkExpanded(KEY));
 
-  function select() {
+  function onclick() {
+    if ($selected === SELECTION || isCurrentClient) {
+      toggle(KEY);
+    }
+
     if (!isCurrentClient) {
       $selected = SELECTION;
     }
-    toggle(KEY);
   }
 </script>
 
-<tr class="row" class:selected={SELECTION == $selected} style="--indent: 1;" onclick={select}>
+<tr class="row" class:selected={SELECTION == $selected} style="--indent: 1;" {onclick}>
   <td class="name" colspan="3">
     <div>
       <span class="lucide" class:icon-chevron-right={!isExpanded} class:icon-chevron-down={isExpanded}></span>

@@ -71,6 +71,13 @@
   onDestroy(() => {
     clearInterval(memoryInterval);
   });
+
+  function onclick() {
+    if ($selected === `proc#${pid}`) {
+      toggle(KEY);
+    }
+    $selected = `proc#${pid}`;
+  }
 </script>
 
 {#if !proc._disposed}
@@ -80,10 +87,7 @@
     class="row"
     style="--indent: {indent};"
     class:closing
-    onclick={() => {
-      toggle(KEY);
-      $selected = `proc#${pid}`;
-    }}
+    {onclick}
     use:contextMenu={[
       [
         {

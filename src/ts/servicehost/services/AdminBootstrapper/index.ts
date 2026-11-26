@@ -14,7 +14,7 @@ import { Backend } from "$ts/kernel/mods/server/axios";
 import { CommandResult } from "$ts/result";
 import { BaseService } from "$ts/servicehost/base";
 import { UserPaths } from "$ts/user/store";
-import { IsBeta } from "$ts/util";
+import { IsBeta, ToAxiosProgress } from "$ts/util";
 import { arrayBufferToBlob, arrayBufferToText, textToBlob } from "$ts/util/convert";
 import { toForm } from "$ts/util/form";
 import { join } from "$ts/util/fs";
@@ -1515,9 +1515,13 @@ export class AdminBootstrapper extends BaseService implements IAdminBootstrapper
     }
   }
 
-  async DbQueryExecute<T = any>(query: DbQuery): Promise<ICommandResult<T[]>> {
+  async DbQueryExecute<T = any>(query: DbQuery, onProgress?: FilesystemProgressCallback): Promise<ICommandResult<T[]>> {
     try {
-      return CommandResult.FromResponse(await this.adminClient.post(`/dbquery/execute`, query));
+      return CommandResult.FromResponse(
+        await this.adminClient.post(`/dbquery/execute`, query, {
+          onDownloadProgress: ToAxiosProgress(onProgress),
+        })
+      );
     } catch (e) {
       return CommandResult.AxiosError(e);
     }

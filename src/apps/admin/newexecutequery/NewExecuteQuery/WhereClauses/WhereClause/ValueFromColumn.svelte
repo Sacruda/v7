@@ -25,8 +25,6 @@
   });
 </script>
 
-<p>Value of:</p>
-
 <select bind:value={$whereClauses[$selectedCollection][i].valueFromColumn!.columnName}>
   <option value="" selected disabled>(select source column)</option>
   {#each $selectedColumns[$selectedCollection] as column (column.column)}

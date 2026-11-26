@@ -105,7 +105,7 @@ export class ArcTerminal extends Process implements IArcTerminal {
   async readline() {
     if (this._disposed) return;
 
-    this.window?.windowTitle.set(`ATerminalrcTerm - ${this.path}`);
+    this.window?.windowTitle.set(`Terminal - ${this.path}`);
     const line = await this.rl?.read(this.var?.replace(this.config.prompt || "$")!);
     await this.processLine(line);
   }

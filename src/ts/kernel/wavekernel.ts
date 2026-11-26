@@ -85,7 +85,7 @@ export class WaveKernel implements IWaveKernel {
     await getLicense();
     await ChangeLogs.refreshChangelogs();
 
-    HtmlUtil.GetStateLoader().innerText += ".";
+    Dot();
 
     this.Log(`Sacruda`, `***** [v7 -> Sacruda InDev v${SacrudaVersion}-${this.ARCOS_MODE}_${this.ARCOS_BUILD}] *****`);
 
@@ -102,6 +102,7 @@ export class WaveKernel implements IWaveKernel {
 
     await this.init?.jumpstart();
     __Console__.timeEnd("** Kernel init");
+    window.__DW_READY__ = true;
   }
 
   getModule<T = any>(id: string, dontCrash = false): T {
