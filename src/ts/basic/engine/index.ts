@@ -62,9 +62,9 @@ export class ArcBasicEngine {
     this.sendToStderr(`*** DEBUG::${this.programCounter} *** ${message}\n`);
   }
 
-  async getFromStdin(): Promise<string> {
+  async getFromStdin(prompt = ""): Promise<string> {
     this.Debug(`getFromStdin`);
-    return await this.stdin();
+    return await this.stdin(prompt);
   }
 
   async sendToStdout(message: string) {

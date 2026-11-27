@@ -11,24 +11,7 @@ import { BasicBuiltinVariables } from "./variables";
 export function ArcTermBasicConfig(term: IArcTerminal): BasicLang.Config {
   return {
     version: SacrudaVersion,
-    stdin: async () => {
-      // TODO: FIND SOMETHING BETTER
-      return new Promise((resolve) => {
-        let val = "";
-        const disposer = term.term.onKey((e) => {
-          term.term.write(e.key);
-
-          if (e.key == "\r") {
-            resolve(val);
-            disposer.dispose();
-            term.term.write("\n");
-            return;
-          }
-
-          val += e.key;
-        });
-      });
-    },
+    stdin: async (prompt) => (await term.rl?.read(unescapeEscapeChars(prompt))) ?? "",
     stdout: (msg: string) => {
       term.rl?.write(unescapeEscapeChars(msg));
     },

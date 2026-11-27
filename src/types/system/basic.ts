@@ -6,7 +6,7 @@ import { BasicCommand } from "../../ts/basic/engine/command";
 export namespace BasicLang {
   export type Fn = (val: string, interpreter: ArcBasicEngine) => MaybePromise<any>;
 
-  export type StdinCallback = () => Promise<string> | string;
+  export type StdinCallback = (prompt: string) => Promise<string> | string;
   export type StdoutCallback = (msg: string) => void;
   export type VariableCallback = () => Promise<any> | any;
   export type TerminalBuiltinFn = (term: IArcTerminal) => Fn;
